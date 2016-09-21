@@ -58,7 +58,7 @@ public class ConnectObservableFactory extends BaseObservableFactory {
     }
 
     public Observable<Void> create() {
-        return Observable.fromAsync(observer -> {
+        return Observable.fromEmitter(observer -> {
             try {
                 client.connect(options, new ConnectActionListener(observer));
             } catch (MqttException exception) {

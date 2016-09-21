@@ -53,7 +53,7 @@ public class DisconnectObservableFactory extends BaseObservableFactory {
     }
 
     public Observable<Void> create() {
-        return Observable.fromAsync(observer -> {
+        return Observable.fromEmitter(observer -> {
             try {
                 client.disconnect(null, new DisconnectActionListener(observer));
             } catch (MqttException exception) {

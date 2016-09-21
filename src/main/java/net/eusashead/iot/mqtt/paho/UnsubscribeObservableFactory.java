@@ -54,7 +54,7 @@ public class UnsubscribeObservableFactory extends BaseObservableFactory {
     
     public Observable<Void> create(final String[] topics) {
         
-        return Observable.fromAsync(observer -> {
+        return Observable.fromEmitter(observer -> {
             try {
                 client.unsubscribe(topics, null, new UnsubscribeActionListener(observer));
             } catch (MqttException exception) {

@@ -80,7 +80,7 @@ public class PublishObservableFactory extends BaseObservableFactory {
 
     public Observable<PublishToken> create(final String topic,
             final MqttMessage msg) {
-        return Observable.fromAsync(observer -> {
+        return Observable.fromEmitter(observer -> {
             try {
                 client.publish(topic, msg.getPayload(), msg.getQos(),
                         msg.isRetained(), null, new PublishActionListener(observer));

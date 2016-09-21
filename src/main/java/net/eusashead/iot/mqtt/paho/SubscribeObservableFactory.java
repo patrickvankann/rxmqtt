@@ -56,7 +56,7 @@ public class SubscribeObservableFactory extends BaseObservableFactory {
 
     public Observable<MqttMessage> create(final String[] topics,
             final int[] qos) {
-        return Observable.fromAsync(observer -> {
+        return Observable.fromEmitter(observer -> {
             
             // Message listeners
             final SubscriberMqttMessageListener[] listeners = new SubscriberMqttMessageListener[topics.length];
