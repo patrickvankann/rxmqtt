@@ -55,7 +55,7 @@ public class ConnectObservableFactoryTest {
         final Observable<Void> obs = factory.create();
         Assert.assertNotNull(obs);
         obs.subscribe();
-        Mockito.verify(client).connect(Mockito.same(options),
+        Mockito.verify(client).connect(Mockito.same(options), Mockito.isNull(),
                 actionListener.capture());
         Assert.assertTrue(actionListener.getValue() instanceof ConnectObservableFactory.ConnectActionListener);
     }
@@ -65,7 +65,7 @@ public class ConnectObservableFactoryTest {
         expectedException.expectCause(isA(MqttException.class));
         final MqttConnectOptions options = Mockito.mock(MqttConnectOptions.class);
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
-        Mockito.when(client.connect(Mockito.same(options),
+        Mockito.when(client.connect(Mockito.same(options), Mockito.isNull(),
                 Mockito.any(ConnectObservableFactory.ConnectActionListener.class)))
                 .thenThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED));
         final ConnectObservableFactory factory = new ConnectObservableFactory(client, options);

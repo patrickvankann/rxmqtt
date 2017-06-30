@@ -60,7 +60,7 @@ public class ConnectObservableFactory extends BaseObservableFactory {
     public Observable<Void> create() {
         return Observable.fromEmitter(observer -> {
             try {
-                client.connect(options, new ConnectActionListener(observer));
+                client.connect(options, null, new ConnectActionListener(observer));
             } catch (MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
