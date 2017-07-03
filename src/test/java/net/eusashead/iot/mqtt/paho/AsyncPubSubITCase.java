@@ -35,10 +35,10 @@ import org.junit.runners.JUnit4;
 public class AsyncPubSubITCase {
 
     // TCP MQTT broker
-    public static final String TCP_BROKER_URL = "tcp://192.168.99.100:1883";
+    public static final String TCP_BROKER_URL = "tcp://localhost:1883";
 
     // Websocket MQTT broker
-    public static final String WS_BROKER_URL = "ws://192.168.99.100:15675/ws";
+    public static final String WS_BROKER_URL = "ws://localhost:15675/ws";
 
     private static final String CLIENT_ID = "test-mqtt-client";
     private static final String TOPIC = "test-mqtt-topic";

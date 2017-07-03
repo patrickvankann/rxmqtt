@@ -44,7 +44,7 @@ import rx.Observable;
 public class PahoObservableMqttClientITCase {
 
     // Websocket MQTT broker
-    public static final String WS_BROKER_URL = "ws://192.168.99.100:15675/ws";
+    public static final String WS_BROKER_URL = "ws://localhost:15675/ws";
 
     private static final String CLIENT_ID = "test-mqtt-client";
     private static final String TOPIC = "test-mqtt-topic";
