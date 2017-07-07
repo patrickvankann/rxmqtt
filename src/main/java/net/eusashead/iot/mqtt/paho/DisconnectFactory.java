@@ -31,7 +31,7 @@ import io.reactivex.Completable;
 import io.reactivex.CompletableEmitter;
 
 public class DisconnectFactory extends BaseMqttActionFactory {
-    
+
     private final static Logger LOGGER = Logger.getLogger(DisconnectFactory.class.getName());
 
     static final class DisconnectActionListener extends CompletableEmitterMqttActionListener {
@@ -52,15 +52,15 @@ public class DisconnectFactory extends BaseMqttActionFactory {
 
     public Completable create() {
         return Completable.create(emitter -> {
-            
-                try {
-                    client.disconnect(null, new DisconnectActionListener(emitter));
-                } catch (MqttException exception) {
-                    if (LOGGER.isLoggable(Level.SEVERE)) {
-                        LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
-                    }
-                    emitter.onError(exception);
+
+            try {
+                client.disconnect(null, new DisconnectActionListener(emitter));
+            } catch (MqttException exception) {
+                if (LOGGER.isLoggable(Level.SEVERE)) {
+                    LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
                 }
+                emitter.onError(exception);
+            }
         });
     }
 

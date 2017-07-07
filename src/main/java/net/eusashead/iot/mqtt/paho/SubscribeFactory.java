@@ -35,7 +35,7 @@ import io.reactivex.FlowableEmitter;
 import net.eusashead.iot.mqtt.MqttMessage;
 
 public class SubscribeFactory extends BaseMqttActionFactory {
-    
+
     static final class SubscribeActionListener extends FlowableEmitterMqttActionListener<MqttMessage> {
 
         public SubscribeActionListener(final FlowableEmitter<? super MqttMessage> observer) {
@@ -54,16 +54,15 @@ public class SubscribeFactory extends BaseMqttActionFactory {
         super(client);
     }
 
-    public Flowable<MqttMessage> create(final String[] topics,
-            final int[] qos) {
+    public Flowable<MqttMessage> create(final String[] topics, final int[] qos) {
         return Flowable.create(observer -> {
-            
+
             // Message listeners
             final SubscriberMqttMessageListener[] listeners = new SubscriberMqttMessageListener[topics.length];
             for (int i = 0; i < topics.length; i++) {
                 listeners[i] = new SubscriberMqttMessageListener(observer);
             }
-            
+
             try {
                 client.subscribe(topics, qos, null, new SubscribeActionListener(observer), listeners);
             } catch (MqttException exception) {
@@ -78,9 +77,9 @@ public class SubscribeFactory extends BaseMqttActionFactory {
 }
 
 class SubscriberMqttMessageListener implements IMqttMessageListener {
-    
+
     private final static Logger LOGGER = Logger.getLogger(SubscriberMqttMessageListener.class.getName());
-    
+
     private final FlowableEmitter<? super MqttMessage> observer;
 
     SubscriberMqttMessageListener(final FlowableEmitter<? super MqttMessage> observer) {

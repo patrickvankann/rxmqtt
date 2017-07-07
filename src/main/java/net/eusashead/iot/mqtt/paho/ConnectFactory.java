@@ -33,13 +33,13 @@ import io.reactivex.Completable;
 import io.reactivex.CompletableEmitter;
 
 public class ConnectFactory extends BaseMqttActionFactory {
-    
+
     static final class ConnectActionListener extends CompletableEmitterMqttActionListener {
-        
+
         public ConnectActionListener(final CompletableEmitter emitter) {
             super(emitter);
         }
-        
+
         @Override
         public void onSuccess(IMqttToken asyncActionToken) {
             emitter.onComplete();
@@ -47,7 +47,7 @@ public class ConnectFactory extends BaseMqttActionFactory {
     }
 
     private final MqttConnectOptions options;
-    
+
     private final static Logger LOGGER = Logger.getLogger(ConnectFactory.class.getName());
 
     public ConnectFactory(final IMqttAsyncClient client, final MqttConnectOptions options) {

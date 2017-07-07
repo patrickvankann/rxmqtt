@@ -41,16 +41,14 @@ public interface ObservableMqttClient {
     String getBrokerUri();
 
     /**
-     * Get the MQTT client id 
-     * from the underlying MQTT client
+     * Get the MQTT client id from the underlying MQTT client
      * 
      * @return {@link String} client identifier
      */
     String getClientId();
 
     /**
-     * Whether the MQTT client is
-     * connected to the broker
+     * Whether the MQTT client is connected to the broker
      * 
      * @return <code>true</code> if connected, <code>false</code> otherwise
      */
@@ -73,32 +71,32 @@ public interface ObservableMqttClient {
     /**
      * Disconnect the MQTT client
      * 
-     * @return {@link Completable} that will complete on successful disconnection
+     * @return {@link Completable} that will complete on successful
+     *         disconnection
      */
     Completable disconnect();
-    
+
     /**
-     * Publish an {@link MqttMessage}
-     * to a {@link String} topic
-     * at the given QOS level
+     * Publish an {@link MqttMessage} to a {@link String} topic at the given QOS
+     * level
      * 
-     * @return {@link Single} that will complete on successful publication with a {@link PublishToken}
+     * @return {@link Single} that will complete on successful publication with
+     *         a {@link PublishToken}
      */
     Single<PublishToken> publish(String topic, MqttMessage msg);
 
     /**
-     * Subscribe to multiple {@link String} topics
-     * to receive multiple {@link MqttMessage}
-     * at the given QOS levels
+     * Subscribe to multiple {@link String} topics to receive multiple
+     * {@link MqttMessage} at the given QOS levels
      * 
-     * @return {@link Single} that will complete on successful publication with a {@link PublishToken}
+     * @return {@link Single} that will complete on successful publication with
+     *         a {@link PublishToken}
      */
     Flowable<MqttMessage> subscribe(String[] topics, int[] qos);
 
     /**
-     * Subscribe to a {@link String} topic 
-     * to receive multiple {@link MqttMessage}
-     * at the supplied QOS level
+     * Subscribe to a {@link String} topic to receive multiple
+     * {@link MqttMessage} at the supplied QOS level
      * 
      * @return {@link Flowable} that will receive multiple {@link MqttMessage}
      */

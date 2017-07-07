@@ -31,7 +31,7 @@ import io.reactivex.Completable;
 import io.reactivex.CompletableEmitter;
 
 public class UnsubscribeFactory extends BaseMqttActionFactory {
-    
+
     private final static Logger LOGGER = Logger.getLogger(UnsubscribeFactory.class.getName());
 
     static final class UnsubscribeActionListener extends CompletableEmitterMqttActionListener {
@@ -45,13 +45,13 @@ public class UnsubscribeFactory extends BaseMqttActionFactory {
             emitter.onComplete();
         }
     }
-    
+
     public UnsubscribeFactory(final IMqttAsyncClient client) {
         super(client);
     }
-    
+
     public Completable create(final String[] topics) {
-        
+
         return Completable.create(emitter -> {
             try {
                 client.unsubscribe(topics, null, new UnsubscribeActionListener(emitter));
@@ -63,5 +63,5 @@ public class UnsubscribeFactory extends BaseMqttActionFactory {
             }
         });
     }
-    
+
 }

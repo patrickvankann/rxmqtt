@@ -41,15 +41,15 @@ public class PublishFactory extends BaseMqttActionFactory {
     static final class PublishActionListener extends BaseEmitterMqttActionListener {
 
         private final SingleEmitter<? super PublishToken> emitter;
-        
+
         public PublishActionListener(final SingleEmitter<? super PublishToken> emitter) {
             this.emitter = Objects.requireNonNull(emitter);
         }
-        
+
         @Override
         public OnError getOnError() {
             return new OnError() {
-                
+
                 @Override
                 public void onError(Throwable t) {
                     emitter.onError(t);
@@ -81,7 +81,7 @@ public class PublishFactory extends BaseMqttActionFactory {
                 public boolean getSessionPresent() {
                     return t.getSessionPresent();
                 }
-                
+
             };
             emitter.onSuccess(b);
         }
@@ -91,12 +91,11 @@ public class PublishFactory extends BaseMqttActionFactory {
         super(client);
     }
 
-    public Single<PublishToken> create(final String topic,
-            final MqttMessage msg) {
+    public Single<PublishToken> create(final String topic, final MqttMessage msg) {
         return Single.create(emitter -> {
             try {
-                client.publish(topic, msg.getPayload(), msg.getQos(),
-                        msg.isRetained(), null, new PublishActionListener(emitter));
+                client.publish(topic, msg.getPayload(), msg.getQos(), msg.isRetained(), null,
+                        new PublishActionListener(emitter));
             } catch (MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);

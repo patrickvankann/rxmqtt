@@ -27,7 +27,7 @@ import io.reactivex.Completable;
 import io.reactivex.functions.Action;
 
 public class CloseFactory extends BaseMqttActionFactory {
-    
+
     public CloseFactory(final IMqttAsyncClient client) {
         super(client);
     }
@@ -35,7 +35,7 @@ public class CloseFactory extends BaseMqttActionFactory {
     public Completable create() {
 
         return Completable.fromAction(new Action() {
-            
+
             @Override
             public void run() throws MqttException {
                 client.close();

@@ -27,15 +27,15 @@ import io.reactivex.CompletableEmitter;
 public abstract class CompletableEmitterMqttActionListener extends BaseEmitterMqttActionListener {
 
     protected final CompletableEmitter emitter;
-    
+
     public CompletableEmitterMqttActionListener(final CompletableEmitter emitter) {
         this.emitter = Objects.requireNonNull(emitter);
     }
-    
+
     @Override
     public OnError getOnError() {
         return new OnError() {
-            
+
             @Override
             public void onError(Throwable t) {
                 emitter.onError(t);
