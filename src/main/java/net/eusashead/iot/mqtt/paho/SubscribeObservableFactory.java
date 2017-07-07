@@ -29,16 +29,16 @@ import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
 import net.eusashead.iot.mqtt.MqttMessage;
-import rx.AsyncEmitter.BackpressureMode;
-import rx.Observable;
-import rx.Observer;
 
 public class SubscribeObservableFactory extends BaseObservableFactory {
     
-    static final class SubscribeActionListener extends ObserverMqttActionListener<MqttMessage> {
+    static final class SubscribeActionListener extends FlowableEmitterMqttActionListener<MqttMessage> {
 
-        public SubscribeActionListener(final Observer<? super MqttMessage> observer) {
+        public SubscribeActionListener(final FlowableEmitter<? super MqttMessage> observer) {
             super(observer);
         }
 
@@ -54,9 +54,9 @@ public class SubscribeObservableFactory extends BaseObservableFactory {
         super(client);
     }
 
-    public Observable<MqttMessage> create(final String[] topics,
+    public Flowable<MqttMessage> create(final String[] topics,
             final int[] qos) {
-        return Observable.fromEmitter(observer -> {
+        return Flowable.create(observer -> {
             
             // Message listeners
             final SubscriberMqttMessageListener[] listeners = new SubscriberMqttMessageListener[topics.length];
@@ -72,7 +72,7 @@ public class SubscribeObservableFactory extends BaseObservableFactory {
                 }
                 observer.onError(exception);
             }
-        }, BackpressureMode.BUFFER);
+        }, BackpressureStrategy.BUFFER);
     }
 
 }
@@ -81,9 +81,9 @@ class SubscriberMqttMessageListener implements IMqttMessageListener {
     
     private final static Logger LOGGER = Logger.getLogger(SubscriberMqttMessageListener.class.getName());
     
-    private final Observer<? super MqttMessage> observer;
+    private final FlowableEmitter<? super MqttMessage> observer;
 
-    SubscriberMqttMessageListener(final Observer<? super MqttMessage> observer) {
+    SubscriberMqttMessageListener(final FlowableEmitter<? super MqttMessage> observer) {
         this.observer = Objects.requireNonNull(observer);
     }
 

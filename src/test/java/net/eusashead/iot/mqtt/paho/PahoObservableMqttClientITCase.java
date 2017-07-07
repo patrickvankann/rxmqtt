@@ -36,9 +36,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import io.reactivex.Completable;
+import io.reactivex.Flowable;
 import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.PublishToken;
-import rx.Observable;
 
 @RunWith(JUnit4.class)
 public class PahoObservableMqttClientITCase {
@@ -71,8 +72,8 @@ public class PahoObservableMqttClientITCase {
         Assert.assertFalse(this.asyncClient.isConnected());
         Assert.assertFalse(this.observableClient.isConnected());
         
-        Observable<Void> obs = this.observableClient.connect();
-        obs.toBlocking().first();
+        Completable obs = this.observableClient.connect();
+        obs.blockingAwait();
         
         Assert.assertTrue(this.asyncClient.isConnected());
         Assert.assertTrue(this.observableClient.isConnected());
@@ -86,8 +87,8 @@ public class PahoObservableMqttClientITCase {
         Assert.assertTrue(this.asyncClient.isConnected());
         Assert.assertTrue(this.observableClient.isConnected());
         
-        Observable<Void> obs1 = this.observableClient.disconnect();
-        obs1.toBlocking().first();
+        Completable obs1 = this.observableClient.disconnect();
+        obs1.blockingAwait();
         
         Assert.assertFalse(this.asyncClient.isConnected());
         Assert.assertFalse(this.observableClient.isConnected());
@@ -99,12 +100,12 @@ public class PahoObservableMqttClientITCase {
         Assert.assertFalse(this.asyncClient.isConnected());
         Assert.assertFalse(this.observableClient.isConnected());
         
-        Observable<Void> obs1 = this.observableClient.connect();
-        obs1.toBlocking().first();
-        Observable<Void> obs2 = this.observableClient.disconnect();
-        obs2.toBlocking().first();
-        Observable<Void> obs3 = this.observableClient.close();
-        obs3.toBlocking().first();
+        Completable obs1 = this.observableClient.connect();
+        obs1.blockingAwait();
+        Completable obs2 = this.observableClient.disconnect();
+        obs2.blockingAwait();
+        Completable obs3 = this.observableClient.close();
+        obs3.blockingAwait();
         
         // Should error
         AsyncPahoUtils.connect(this.asyncClient);
@@ -225,7 +226,7 @@ public class PahoObservableMqttClientITCase {
 
         // Publish the message
         MqttMessage msg = MqttMessage.create(0, new byte[] { 'a', 'b', 'c' }, 1, false);
-        Observable<PublishToken> obs = this.observableClient.publish(TOPIC, msg);
+        Flowable<PublishToken> obs = this.observableClient.publish(TOPIC, msg);
 
         // Subscribe for result
         obs.subscribe(r -> {

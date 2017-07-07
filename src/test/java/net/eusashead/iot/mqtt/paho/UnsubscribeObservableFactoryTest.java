@@ -35,9 +35,9 @@ import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
 import net.eusashead.iot.mqtt.paho.UnsubscribeObservableFactory.UnsubscribeActionListener;
-import rx.Observable;
-import rx.Observer;
 
 @RunWith(JUnit4.class)
 public class UnsubscribeObservableFactoryTest {
@@ -54,7 +54,7 @@ public class UnsubscribeObservableFactoryTest {
         final ArgumentCaptor<IMqttActionListener> actionListener = ArgumentCaptor.forClass(IMqttActionListener.class);
 
         // When
-        final Observable<Void> obs = factory.create(topics);
+        final Completable obs = factory.create(topics);
 
         // Then
         Assert.assertNotNull(obs);
@@ -72,19 +72,17 @@ public class UnsubscribeObservableFactoryTest {
                 Mockito.any(UnsubscribeObservableFactory.UnsubscribeActionListener.class)))
         .thenThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED));
         final UnsubscribeObservableFactory factory = new UnsubscribeObservableFactory(client);
-        final Observable<Void> obs = factory.create(new String[]{ "topic1", "topic2" });
-        obs.toBlocking().first();
+        final Completable obs = factory.create(new String[]{ "topic1", "topic2" });
+        obs.blockingAwait();
     }
 
     @Test
     public void whenOnSuccessIsCalledThenObserverOnNextAndOnCompletedAreCalled() throws Exception {
-        @SuppressWarnings("unchecked")
-        final Observer<Void> observer = Mockito.mock(Observer.class);
+        final CompletableEmitter observer = Mockito.mock(CompletableEmitter.class);
         final UnsubscribeActionListener listener = new UnsubscribeObservableFactory.UnsubscribeActionListener(observer);
         final IMqttToken asyncActionToken = Mockito.mock(IMqttToken.class);
         listener.onSuccess(asyncActionToken);
-        Mockito.verify(observer).onNext(null);
-        Mockito.verify(observer).onCompleted();
+        Mockito.verify(observer).onComplete();
     }
 
 }

@@ -35,8 +35,8 @@ import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import io.reactivex.Flowable;
 import net.eusashead.iot.mqtt.MqttMessage;
-import rx.Observable;
 
 @RunWith(JUnit4.class)
 public class SubscribeObservableFactoryTest {
@@ -52,7 +52,7 @@ public class SubscribeObservableFactoryTest {
         final ArgumentCaptor<IMqttMessageListener[]> messageListener = ArgumentCaptor.forClass(IMqttMessageListener[].class);
         final String[] topics = new String[]{ "topic1", "topic2" };
         final int[] qos = new int[]{ 1, 2 };
-        final Observable<MqttMessage> obs = factory.create(topics, qos);
+        final Flowable<MqttMessage> obs = factory.create(topics, qos);
         Assert.assertNotNull(obs);
         obs.subscribe();
         Mockito.verify(client).subscribe(Mockito.same(topics),
@@ -80,8 +80,8 @@ public class SubscribeObservableFactoryTest {
                 messageListener.capture()))
                 .thenThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED));
         final SubscribeObservableFactory factory = new SubscribeObservableFactory(client);
-        final Observable<MqttMessage> obs = factory.create(topics, qos);
-        obs.toBlocking().first();
+        final Flowable<MqttMessage> obs = factory.create(topics, qos);
+        obs.blockingFirst();
     }
     
 }

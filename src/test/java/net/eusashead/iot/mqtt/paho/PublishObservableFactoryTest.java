@@ -35,12 +35,12 @@ import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
 import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.MqttToken;
 import net.eusashead.iot.mqtt.PublishToken;
 import net.eusashead.iot.mqtt.paho.PublishObservableFactory.PublishActionListener;
-import rx.Observable;
-import rx.Observer;
 
 @RunWith(JUnit4.class)
 public class PublishObservableFactoryTest {
@@ -58,7 +58,7 @@ public class PublishObservableFactoryTest {
         final ArgumentCaptor<IMqttActionListener> actionListener = ArgumentCaptor.forClass(IMqttActionListener.class);
 
         // When
-        final Observable<PublishToken> obs = factory.create(topic, msg);
+        final Flowable<PublishToken> obs = factory.create(topic, msg);
 
         // Then
         Assert.assertNotNull(obs);
@@ -80,14 +80,14 @@ public class PublishObservableFactoryTest {
                 Mockito.any(PublishObservableFactory.PublishActionListener.class)))
         .thenThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED));
         final PublishObservableFactory factory = new PublishObservableFactory(client);
-        final Observable<PublishToken> obs = factory.create("topic1", Mockito.mock(MqttMessage.class));
-        obs.toBlocking().first();
+        final Flowable<PublishToken> obs = factory.create("topic1", Mockito.mock(MqttMessage.class));
+        obs.blockingFirst();
     }
 
     @Test
     public void whenOnSuccessIsCalledThenObserverOnNextAndOnCompletedAreCalled() throws Exception {
         @SuppressWarnings("unchecked")
-        final Observer<MqttToken> observer = Mockito.mock(Observer.class);
+        final FlowableEmitter<MqttToken> observer = Mockito.mock(FlowableEmitter.class);
         final PublishActionListener listener = new PublishObservableFactory.PublishActionListener(observer);
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
         Mockito.when(client.getClientId()).thenReturn("client_id");
@@ -100,7 +100,7 @@ public class PublishObservableFactoryTest {
         final ArgumentCaptor<MqttToken> publishToken = ArgumentCaptor.forClass(MqttToken.class);
         listener.onSuccess(iMqttDeliveryToken);
         Mockito.verify(observer).onNext(publishToken.capture());
-        Mockito.verify(observer).onCompleted();
+        Mockito.verify(observer).onComplete();
         Assert.assertNotNull(iMqttDeliveryToken);
         Assert.assertNotNull(publishToken);
         Assert.assertNotNull(publishToken.getValue().getClientId());

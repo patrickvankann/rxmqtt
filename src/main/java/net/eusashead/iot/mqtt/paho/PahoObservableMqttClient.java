@@ -28,11 +28,12 @@ import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import io.reactivex.Completable;
+import io.reactivex.Flowable;
 import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.ObservableMqttClient;
 import net.eusashead.iot.mqtt.ObservableMqttClientBuilder;
 import net.eusashead.iot.mqtt.PublishToken;
-import rx.Observable;
 
 public class PahoObservableMqttClient implements ObservableMqttClient {
 
@@ -198,7 +199,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * @see net.eusashead.iot.mqtt.ObservableMqttClient#close()
      */
     @Override
-    public Observable<Void> close() {
+    public Completable close() {
         return this.closeFactory.create();
     }
 
@@ -208,7 +209,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * @see net.eusashead.iot.mqtt.ObservableMqttClient#connect()
      */
     @Override
-    public Observable<Void> connect() {
+    public Completable connect() {
         return this.connectFactory.create();
     }
 
@@ -218,7 +219,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * @see net.eusashead.iot.mqtt.ObservableMqttClient#disconnect()
      */
     @Override
-    public Observable<Void> disconnect() {
+    public Completable disconnect() {
         return this.disconnectFactory.create();
     }
 
@@ -230,7 +231,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * net.eusashead.iot.mqtt.MqttMessage)
      */
     @Override
-    public Observable<PublishToken> publish(final String topic, final MqttMessage msg) {
+    public Flowable<PublishToken> publish(final String topic, final MqttMessage msg) {
         return this.publishFactory.create(topic, msg);
 
     }
@@ -243,7 +244,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * int[])
      */
     @Override
-    public Observable<MqttMessage> subscribe(final String topics[], final int qos[]) {
+    public Flowable<MqttMessage> subscribe(final String topics[], final int qos[]) {
         return this.subscribeFactory.create(topics, qos);
     }
 
@@ -255,7 +256,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * int)
      */
     @Override
-    public Observable<MqttMessage> subscribe(final String topic, final int qos) {
+    public Flowable<MqttMessage> subscribe(final String topic, final int qos) {
         Objects.requireNonNull(topic);
         Objects.requireNonNull(qos);
         return this.subscribe(new String[] { topic }, new int[] { qos });
@@ -269,7 +270,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * ])
      */
     @Override
-    public Observable<Void> unsubscribe(final String[] topics) {
+    public Completable unsubscribe(final String[] topics) {
         return this.unsubscribeFactory.create(topics);
     }
 
@@ -280,7 +281,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * net.eusashead.iot.mqtt.ObservableMqttClient#unsubscribe(java.lang.String)
      */
     @Override
-    public Observable<Void> unsubscribe(final String topic) {
+    public Completable unsubscribe(final String topic) {
         Objects.requireNonNull(topic);
         return this.unsubscribe(new String[] { topic });
     }

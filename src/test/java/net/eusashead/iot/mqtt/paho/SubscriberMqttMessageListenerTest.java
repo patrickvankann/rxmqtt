@@ -28,8 +28,8 @@ import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import io.reactivex.FlowableEmitter;
 import net.eusashead.iot.mqtt.MqttMessage;
-import rx.Observer;
 
 @RunWith(JUnit4.class)
 public class SubscriberMqttMessageListenerTest {
@@ -37,20 +37,20 @@ public class SubscriberMqttMessageListenerTest {
     @Test
     public void whenAValidObserverIsPassedToTheConstructorThenItIsConstructedWithoutError() {
         @SuppressWarnings("unchecked")
-        final Observer<MqttMessage> observer = Mockito.mock(Observer.class);
+        final FlowableEmitter<MqttMessage> observer = Mockito.mock(FlowableEmitter.class);
         new SubscriberMqttMessageListener(observer);
     }
     
     @Test(expected=NullPointerException.class)
     public void whenANulldObserverIsPassedToTheConstructorThenItThrowsAnError() {
-        final Observer<MqttMessage> observer = null;
+        final FlowableEmitter<MqttMessage> observer = null;
         new SubscriberMqttMessageListener(observer);
     }
     
     @Test
     public void whenAMessageArrivesThenTheObserverIsNotified() throws Exception {
         @SuppressWarnings("unchecked")
-        final Observer<MqttMessage> observer = Mockito.mock(Observer.class);
+        final FlowableEmitter<MqttMessage> observer = Mockito.mock(FlowableEmitter.class);
         final IMqttMessageListener listener = new SubscriberMqttMessageListener(observer);
         final String expectedTopic = "expected";
         final byte[] expectedPayload = new byte[]{ 'a', 'b', 'c' };

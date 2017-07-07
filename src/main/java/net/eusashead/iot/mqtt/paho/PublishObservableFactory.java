@@ -27,19 +27,19 @@ import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
 import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.PublishToken;
-import rx.AsyncEmitter.BackpressureMode;
-import rx.Observable;
-import rx.Observer;
 
 public class PublishObservableFactory extends BaseObservableFactory {
 
     private final static Logger LOGGER = Logger.getLogger(PublishObservableFactory.class.getName());
 
-    static final class PublishActionListener extends ObserverMqttActionListener<PublishToken> {
+    static final class PublishActionListener extends FlowableEmitterMqttActionListener<PublishToken> {
 
-        public PublishActionListener(final Observer<? super PublishToken> observer) {
+        public PublishActionListener(final FlowableEmitter<? super PublishToken> observer) {
             super(observer);
         }
 
@@ -69,8 +69,8 @@ public class PublishObservableFactory extends BaseObservableFactory {
                 }
                 
             };
-            observer.onNext(b);
-            observer.onCompleted();
+            emitter.onNext(b);
+            emitter.onComplete();
         }
     }
 
@@ -78,9 +78,9 @@ public class PublishObservableFactory extends BaseObservableFactory {
         super(client);
     }
 
-    public Observable<PublishToken> create(final String topic,
+    public Flowable<PublishToken> create(final String topic,
             final MqttMessage msg) {
-        return Observable.fromEmitter(observer -> {
+        return Flowable.create(observer -> {
             try {
                 client.publish(topic, msg.getPayload(), msg.getQos(),
                         msg.isRetained(), null, new PublishActionListener(observer));
@@ -90,7 +90,7 @@ public class PublishObservableFactory extends BaseObservableFactory {
                 }
                 observer.onError(exception);
             }
-        }, BackpressureMode.BUFFER);
+        }, BackpressureStrategy.BUFFER);
     }
 
 }

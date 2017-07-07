@@ -4,7 +4,7 @@ package net.eusashead.iot.mqtt.paho;
  * #[license]
  * rxmqtt
  * %%
- * Copyright (C) 2013 - 2016 Eusa's Head
+ * Copyright (C) 2013 - 2017 Eusa's Head
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,42 +20,26 @@ package net.eusashead.iot.mqtt.paho;
  * %[license]
  */
 
-import java.util.concurrent.Callable;
-
 import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-import rx.Observable;
-import rx.Observer;
+import io.reactivex.Completable;
+import io.reactivex.functions.Action;
 
+// TODO rename as this is no longer an Observable
 public class CloseObservableFactory extends BaseObservableFactory {
     
-    static final class CloseActionListener extends ObserverMqttActionListener<Void> {
-
-        public CloseActionListener(final Observer<? super Void> observer) {
-            super(observer);
-        }
-
-        @Override
-        public void onSuccess(IMqttToken asyncActionToken) {
-            observer.onNext(null);
-            observer.onCompleted();
-        }
-    }
-
     public CloseObservableFactory(final IMqttAsyncClient client) {
         super(client);
     }
 
-    public Observable<Void> create() {
+    public Completable create() {
 
-        return Observable.fromCallable(new Callable<Void>() {
-
+        return Completable.fromAction(new Action() {
+            
             @Override
-            public Void call() throws MqttException {
+            public void run() throws MqttException {
                 client.close();
-                return null;
             }
         });
     }

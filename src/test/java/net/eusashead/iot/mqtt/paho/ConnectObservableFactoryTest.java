@@ -36,9 +36,9 @@ import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
 import net.eusashead.iot.mqtt.paho.ConnectObservableFactory.ConnectActionListener;
-import rx.Observable;
-import rx.Observer;
 
 @RunWith(JUnit4.class)
 public class ConnectObservableFactoryTest {
@@ -52,7 +52,7 @@ public class ConnectObservableFactoryTest {
         final MqttConnectOptions options = Mockito.mock(MqttConnectOptions.class);
         final ConnectObservableFactory factory = new ConnectObservableFactory(client, options);
         final ArgumentCaptor<IMqttActionListener> actionListener = ArgumentCaptor.forClass(IMqttActionListener.class);
-        final Observable<Void> obs = factory.create();
+        final Completable obs = factory.create();
         Assert.assertNotNull(obs);
         obs.subscribe();
         Mockito.verify(client).connect(Mockito.same(options), Mockito.isNull(),
@@ -69,19 +69,17 @@ public class ConnectObservableFactoryTest {
                 Mockito.any(ConnectObservableFactory.ConnectActionListener.class)))
                 .thenThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED));
         final ConnectObservableFactory factory = new ConnectObservableFactory(client, options);
-        final Observable<Void> obs = factory.create();
-        obs.toBlocking().first();
+        final Completable obs = factory.create();
+        obs.blockingAwait();
     }
 
     @Test
     public void whenOnSuccessIsCalledThenObserverOnNextAndOnCompletedAreCalled() throws Exception {
-        @SuppressWarnings("unchecked")
-        final Observer<Void> observer = Mockito.mock(Observer.class);
+        final CompletableEmitter observer = Mockito.mock(CompletableEmitter.class);
         final ConnectActionListener listener = new ConnectObservableFactory.ConnectActionListener(observer);
         final IMqttToken asyncActionToken = Mockito.mock(IMqttToken.class);
         listener.onSuccess(asyncActionToken);
-        Mockito.verify(observer).onNext(null);
-        Mockito.verify(observer).onCompleted();
+        Mockito.verify(observer).onComplete();
     }
     
 }

@@ -27,24 +27,22 @@ import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-import rx.AsyncEmitter.BackpressureMode;
-import rx.Observable;
-import rx.Observer;
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
 
 public class DisconnectObservableFactory extends BaseObservableFactory {
     
     private final static Logger LOGGER = Logger.getLogger(DisconnectObservableFactory.class.getName());
 
-    static final class DisconnectActionListener extends ObserverMqttActionListener<Void> {
+    static final class DisconnectActionListener extends CompletableEmitterMqttActionListener {
 
-        public DisconnectActionListener(final Observer<? super Void> observer) {
-            super(observer);
+        public DisconnectActionListener(final CompletableEmitter emitter) {
+            super(emitter);
         }
 
         @Override
         public void onSuccess(IMqttToken asyncActionToken) {
-            observer.onNext(null);
-            observer.onCompleted();
+            emitter.onComplete();
         }
     }
 
@@ -52,17 +50,18 @@ public class DisconnectObservableFactory extends BaseObservableFactory {
         super(client);
     }
 
-    public Observable<Void> create() {
-        return Observable.fromEmitter(observer -> {
-            try {
-                client.disconnect(null, new DisconnectActionListener(observer));
-            } catch (MqttException exception) {
-                if (LOGGER.isLoggable(Level.SEVERE)) {
-                    LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
+    public Completable create() {
+        return Completable.create(emitter -> {
+            
+                try {
+                    client.disconnect(null, new DisconnectActionListener(emitter));
+                } catch (MqttException exception) {
+                    if (LOGGER.isLoggable(Level.SEVERE)) {
+                        LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
+                    }
+                    emitter.onError(exception);
                 }
-                observer.onError(exception);
-            }
-        }, BackpressureMode.BUFFER);
+        });
     }
 
 }

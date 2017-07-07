@@ -35,9 +35,9 @@ import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
 import net.eusashead.iot.mqtt.paho.DisconnectObservableFactory.DisconnectActionListener;
-import rx.Observable;
-import rx.Observer;
 
 @RunWith(JUnit4.class)
 public class DisconnectObservableFactoryTest {
@@ -53,7 +53,7 @@ public class DisconnectObservableFactoryTest {
         final ArgumentCaptor<IMqttActionListener> actionListener = ArgumentCaptor.forClass(IMqttActionListener.class);
 
         // When
-        final Observable<Void> obs = factory.create();
+        final Completable obs = factory.create();
 
         // Then
         Assert.assertNotNull(obs);
@@ -71,19 +71,17 @@ public class DisconnectObservableFactoryTest {
                 Mockito.any(DisconnectObservableFactory.DisconnectActionListener.class)))
         .thenThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED));
         final DisconnectObservableFactory factory = new DisconnectObservableFactory(client);
-        final Observable<Void> obs = factory.create();
-        obs.toBlocking().first();
+        final Completable obs = factory.create();
+        obs.blockingAwait();
     }
 
     @Test
     public void whenOnSuccessIsCalledThenObserverOnNextAndOnCompletedAreCalled() throws Exception {
-        @SuppressWarnings("unchecked")
-        final Observer<Void> observer = Mockito.mock(Observer.class);
+        final CompletableEmitter observer = Mockito.mock(CompletableEmitter.class);
         final DisconnectActionListener listener = new DisconnectObservableFactory.DisconnectActionListener(observer);
         final IMqttToken asyncActionToken = Mockito.mock(IMqttToken.class);
         listener.onSuccess(asyncActionToken);
-        Mockito.verify(observer).onNext(null);
-        Mockito.verify(observer).onCompleted();
+        Mockito.verify(observer).onComplete();
     }
 
 }

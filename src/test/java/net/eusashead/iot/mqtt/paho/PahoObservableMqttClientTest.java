@@ -27,10 +27,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
+import io.reactivex.Completable;
+import io.reactivex.Flowable;
 import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.PublishToken;
 import net.eusashead.iot.mqtt.paho.PahoObservableMqttClient.Builder;
-import rx.Observable;
 
 @RunWith(JUnit4.class)
 public class PahoObservableMqttClientTest {
@@ -80,10 +81,10 @@ public class PahoObservableMqttClientTest {
     @Test
     public void whenCloseIsCalledThenCreateIsCalled() {
         final Builder builder = builderWithMocks("clientId");
-        final Observable<Void> expected = Observable.just(null);
+        final Completable expected = Completable.complete();
         Mockito.when(builder.getCloseFactory().create()).thenReturn(expected);
         final PahoObservableMqttClient target = builder.build();
-        final Observable<Void> actual = target.close();
+        final Completable actual = target.close();
         Mockito.verify(builder.getCloseFactory()).create();
         Assert.assertEquals(expected, actual);
     }
@@ -99,10 +100,10 @@ public class PahoObservableMqttClientTest {
     public void whenConnectIsCalledThenCreateIsCalled() {
         final Builder builder = builderWithMocks("clientId");
         final ConnectObservableFactory factory = builder.getConnectFactory();
-        final Observable<Void> expected = Observable.just(null);
+        final Completable expected = Completable.complete();
         Mockito.when(factory.create()).thenReturn(expected);
         final PahoObservableMqttClient target = builder.build();
-        final Observable<Void> actual = target.connect();
+        final Completable actual = target.connect();
         Mockito.verify(factory).create();
         Assert.assertEquals(expected, actual);
     }
@@ -118,10 +119,10 @@ public class PahoObservableMqttClientTest {
     public void whenDisconnectIsCalledThenCreateIsCalled() {
         final Builder builder = builderWithMocks("clientId");
         final DisconnectObservableFactory factory = builder.getDisconnectFactory();
-        final Observable<Void> expected = Observable.just(null);
+        final Completable expected = Completable.complete();
         Mockito.when(factory.create()).thenReturn(expected);
         final PahoObservableMqttClient target = builder.build();
-        final Observable<Void> actual = target.disconnect();
+        final Completable actual = target.disconnect();
         Mockito.verify(factory).create();
         Assert.assertEquals(expected, actual);
     }
@@ -137,12 +138,12 @@ public class PahoObservableMqttClientTest {
     public void whenPublishCalledThenCreateIsCalled() {
         final Builder builder = builderWithMocks("clientId");
         final PublishObservableFactory factory = builder.getPublishFactory();
-        final Observable<PublishToken> expected = Observable.just(Mockito.mock(PublishToken.class));
+        final Flowable<PublishToken> expected = Flowable.just(Mockito.mock(PublishToken.class));
         final String topic = "topic";
         final MqttMessage message = Mockito.mock(MqttMessage.class);
         Mockito.when(factory.create(topic, message)).thenReturn(expected);
         final PahoObservableMqttClient target = builder.build();
-        final Observable<PublishToken> actual = target.publish(topic, message);
+        final Flowable<PublishToken> actual = target.publish(topic, message);
         Mockito.verify(factory).create( topic, message);
         Assert.assertEquals(expected, actual);
     }
@@ -158,12 +159,12 @@ public class PahoObservableMqttClientTest {
     public void whenSubscribeIsCalledThenCreateIsCalled() {
         final Builder builder = builderWithMocks("clientId");
         final SubscribeObservableFactory factory = builder.getSubscribeFactory();
-        final Observable<MqttMessage> expected = Observable.just(Mockito.mock(MqttMessage.class));
+        final Flowable<MqttMessage> expected = Flowable.just(Mockito.mock(MqttMessage.class));
         final String[] topic = new String[] { "topic" };
         final int[] qos = new int[]{ 1 };
         Mockito.when(factory.create(topic, qos)).thenReturn(expected);
         final PahoObservableMqttClient target = builder.build();
-        final Observable<MqttMessage> actual = target.subscribe(topic, qos);
+        final Flowable<MqttMessage> actual = target.subscribe(topic, qos);
         Mockito.verify(factory).create(topic, qos);
         Assert.assertEquals(expected, actual);
     }
@@ -179,11 +180,11 @@ public class PahoObservableMqttClientTest {
     public void whenUnsubscribeIsCalledThenCreateIsCalled() {
         final Builder builder = builderWithMocks("clientId");
         final UnsubscribeObservableFactory factory = builder.getUnsubscribeFactory();
-        final Observable<Void> expected = Observable.just(null);
+        final Completable expected = Completable.complete();
         final String[] topic = new String[] { "topic" };
         Mockito.when(factory.create(topic)).thenReturn(expected);
         final PahoObservableMqttClient target = builder.build();
-        final Observable<Void> actual = target.unsubscribe(topic);
+        final Completable actual = target.unsubscribe(topic);
         Mockito.verify(factory).create(topic);
         Assert.assertEquals(expected, actual);
     }

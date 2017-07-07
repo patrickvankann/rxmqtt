@@ -33,19 +33,18 @@ import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import net.eusashead.iot.mqtt.paho.ConnectObservableFactory.ConnectActionListener;
-import rx.Observer;
+import io.reactivex.CompletableEmitter;
 
 @RunWith(JUnit4.class)
-public class ObserverMqttActionListenerTest {
+public class CompletableEmitterMqttActionListenerTest {
     
     @Test(expected=NullPointerException.class)
     public void whenTheConstructorIsCalledWithANullObserverANullPointerExceptionOccurs() {
-        new ObserverMqttActionListener<Void>(null) {
+        new CompletableEmitterMqttActionListener(null) {
 
             @Override
             public void onSuccess(IMqttToken asyncActionToken) {
-                
+                // Not invoked
             }
             
         };
@@ -56,10 +55,17 @@ public class ObserverMqttActionListenerTest {
         // Given
         final Handler handler = Mockito.mock(Handler.class);
         final ArgumentCaptor<LogRecord> logRecord = ArgumentCaptor.forClass(LogRecord.class);
-        Logger.getLogger(ObserverMqttActionListener.class.getName()).addHandler(handler);
-        @SuppressWarnings("unchecked")
-        Observer<Void> observer = Mockito.mock(Observer.class);
-        final ConnectActionListener listener = new ConnectObservableFactory.ConnectActionListener(observer);
+        Logger.getLogger(CompletableEmitterMqttActionListener.class.getName()).addHandler(handler);
+        CompletableEmitter observer = Mockito.mock(CompletableEmitter.class);
+        final CompletableEmitterMqttActionListener listener = new CompletableEmitterMqttActionListener(observer) {
+            
+            @Override
+            public void onSuccess(IMqttToken arg0) {
+                // Not invoked
+                
+            }
+        };
+        
         final IMqttToken asyncActionToken = Mockito.mock(IMqttToken.class);
         final Throwable exception = Mockito.mock(Throwable.class);
         String expectedErrorMessage = "Error message";

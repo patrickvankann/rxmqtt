@@ -32,7 +32,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-import rx.Observable;
+import io.reactivex.Completable;
+
 
 @RunWith(JUnit4.class)
 public class CloseObservableFactoryTest {
@@ -47,7 +48,7 @@ public class CloseObservableFactoryTest {
         final CloseObservableFactory factory = new CloseObservableFactory(client);
 
         // When
-        final Observable<Void> obs = factory.create();
+        final Completable obs = factory.create();
 
         // Then
         Assert.assertNotNull(obs);
@@ -61,8 +62,8 @@ public class CloseObservableFactoryTest {
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
         Mockito.doThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED)).when(client).close();
         final CloseObservableFactory factory = new CloseObservableFactory(client);
-        final Observable<Void> obs = factory.create();
-        obs.toBlocking().first();
+        final Completable obs = factory.create();
+        obs.blockingAwait();
     }
 
 }

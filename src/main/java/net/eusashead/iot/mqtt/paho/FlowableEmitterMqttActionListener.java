@@ -27,16 +27,16 @@ import java.util.logging.Logger;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 
-import rx.Observer;
+import io.reactivex.FlowableEmitter;
 
-public abstract class ObserverMqttActionListener<T> implements IMqttActionListener {
+public abstract class FlowableEmitterMqttActionListener<T> implements IMqttActionListener {
 
-    protected final static Logger LOGGER = Logger.getLogger(ObserverMqttActionListener.class.getName());
+    protected final static Logger LOGGER = Logger.getLogger(FlowableEmitterMqttActionListener.class.getName());
 
-    protected final Observer<? super T> observer;
+    protected final FlowableEmitter<? super T> emitter;
     
-    public ObserverMqttActionListener(final Observer<? super T> observer) {
-        this.observer = Objects.requireNonNull(observer);
+    public FlowableEmitterMqttActionListener(final FlowableEmitter<? super T> emitter) {
+        this.emitter = Objects.requireNonNull(emitter);
     }
 
     @Override
@@ -44,9 +44,6 @@ public abstract class ObserverMqttActionListener<T> implements IMqttActionListen
         if (LOGGER.isLoggable(Level.SEVERE)) {
             LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
         }
-        observer.onError(exception);
+        emitter.onError(exception);
     }
-
-   
-
 }

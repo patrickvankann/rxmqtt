@@ -29,22 +29,20 @@ import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-import rx.AsyncEmitter.BackpressureMode;
-import rx.Observable;
-import rx.Observer;
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
 
 public class ConnectObservableFactory extends BaseObservableFactory {
     
-    static final class ConnectActionListener extends ObserverMqttActionListener<Void> {
+    static final class ConnectActionListener extends CompletableEmitterMqttActionListener {
         
-        public ConnectActionListener(final Observer<? super Void> observer) {
-            super(observer);
+        public ConnectActionListener(final CompletableEmitter emitter) {
+            super(emitter);
         }
         
         @Override
         public void onSuccess(IMqttToken asyncActionToken) {
-            observer.onNext(null);
-            observer.onCompleted();
+            emitter.onComplete();
         }
     }
 
@@ -57,17 +55,17 @@ public class ConnectObservableFactory extends BaseObservableFactory {
         this.options = Objects.requireNonNull(options);
     }
 
-    public Observable<Void> create() {
-        return Observable.fromEmitter(observer -> {
+    public Completable create() {
+        return Completable.create(emitter -> {
             try {
-                client.connect(options, null, new ConnectActionListener(observer));
+                client.connect(options, null, new ConnectActionListener(emitter));
             } catch (MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
                 }
-                observer.onError(exception);
+                emitter.onError(exception);
             }
-        }, BackpressureMode.BUFFER);
+        });
     }
 
     public MqttConnectOptions getOptions() {

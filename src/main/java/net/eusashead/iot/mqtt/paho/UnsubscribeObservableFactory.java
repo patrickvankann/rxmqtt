@@ -27,24 +27,22 @@ import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-import rx.AsyncEmitter.BackpressureMode;
-import rx.Observable;
-import rx.Observer;
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
 
 public class UnsubscribeObservableFactory extends BaseObservableFactory {
     
     private final static Logger LOGGER = Logger.getLogger(UnsubscribeObservableFactory.class.getName());
 
-    static final class UnsubscribeActionListener extends ObserverMqttActionListener<Void> {
+    static final class UnsubscribeActionListener extends CompletableEmitterMqttActionListener {
 
-        public UnsubscribeActionListener(final Observer<? super Void> observer) {
-            super(observer);
+        public UnsubscribeActionListener(final CompletableEmitter emitter) {
+            super(emitter);
         }
 
         @Override
         public void onSuccess(IMqttToken asyncActionToken) {
-            observer.onNext(null);
-            observer.onCompleted();
+            emitter.onComplete();
         }
     }
     
@@ -52,18 +50,18 @@ public class UnsubscribeObservableFactory extends BaseObservableFactory {
         super(client);
     }
     
-    public Observable<Void> create(final String[] topics) {
+    public Completable create(final String[] topics) {
         
-        return Observable.fromEmitter(observer -> {
+        return Completable.create(emitter -> {
             try {
-                client.unsubscribe(topics, null, new UnsubscribeActionListener(observer));
+                client.unsubscribe(topics, null, new UnsubscribeActionListener(emitter));
             } catch (MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
                 }
-                observer.onError(exception);
+                emitter.onError(exception);
             }
-        }, BackpressureMode.BUFFER);
+        });
     }
     
 }

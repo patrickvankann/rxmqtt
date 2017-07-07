@@ -1,10 +1,12 @@
 package net.eusashead.iot.mqtt;
 
+import io.reactivex.Completable;
+
 /*
  * #[license]
  * rxmqtt
  * %%
- * Copyright (C) 2013 - 2016 Eusa's Head
+ * Copyright (C) 2013 - 2017 Eusa's Head
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +22,7 @@ package net.eusashead.iot.mqtt;
  * %[license]
  */
 
-import rx.Observable;
+import io.reactivex.Flowable;
 
 /**
  * RxJava MQTT API
@@ -41,20 +43,20 @@ public interface ObservableMqttClient {
 
     boolean isConnected();
 
-    Observable<Void> close();
+    Completable close();
 
-    Observable<Void> connect();
+    Completable connect();
 
-    Observable<Void> disconnect();
+    Completable disconnect();
 
-    Observable<PublishToken> publish(String topic, MqttMessage msg);
+    Flowable<PublishToken> publish(String topic, MqttMessage msg);
 
-    Observable<MqttMessage> subscribe(String[] topics, int[] qos);
+    Flowable<MqttMessage> subscribe(String[] topics, int[] qos);
 
-    Observable<MqttMessage> subscribe(String topic, int qos);
+    Flowable<MqttMessage> subscribe(String topic, int qos);
 
-    Observable<Void> unsubscribe(String[] topics);
+    Completable unsubscribe(String[] topics);
 
-    Observable<Void> unsubscribe(String topic);
+    Completable unsubscribe(String topic);
 
 }
