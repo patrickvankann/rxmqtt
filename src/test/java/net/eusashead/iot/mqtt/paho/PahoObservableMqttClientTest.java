@@ -29,6 +29,7 @@ import org.mockito.Mockito;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.PublishToken;
 import net.eusashead.iot.mqtt.paho.PahoObservableMqttClient.Builder;
@@ -138,12 +139,12 @@ public class PahoObservableMqttClientTest {
     public void whenPublishCalledThenCreateIsCalled() {
         final Builder builder = builderWithMocks("clientId");
         final PublishObservableFactory factory = builder.getPublishFactory();
-        final Flowable<PublishToken> expected = Flowable.just(Mockito.mock(PublishToken.class));
+        final Single<PublishToken> expected = Single.just(Mockito.mock(PublishToken.class));
         final String topic = "topic";
         final MqttMessage message = Mockito.mock(MqttMessage.class);
         Mockito.when(factory.create(topic, message)).thenReturn(expected);
         final PahoObservableMqttClient target = builder.build();
-        final Flowable<PublishToken> actual = target.publish(topic, message);
+        final Single<PublishToken> actual = target.publish(topic, message);
         Mockito.verify(factory).create( topic, message);
         Assert.assertEquals(expected, actual);
     }

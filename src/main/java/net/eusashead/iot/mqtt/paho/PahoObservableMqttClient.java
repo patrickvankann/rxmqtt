@@ -30,6 +30,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.ObservableMqttClient;
 import net.eusashead.iot.mqtt.ObservableMqttClientBuilder;
@@ -231,7 +232,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * net.eusashead.iot.mqtt.MqttMessage)
      */
     @Override
-    public Flowable<PublishToken> publish(final String topic, final MqttMessage msg) {
+    public Single<PublishToken> publish(final String topic, final MqttMessage msg) {
         return this.publishFactory.create(topic, msg);
 
     }

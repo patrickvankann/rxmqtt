@@ -35,8 +35,8 @@ import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
 import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.MqttToken;
 import net.eusashead.iot.mqtt.PublishToken;
@@ -58,7 +58,7 @@ public class PublishObservableFactoryTest {
         final ArgumentCaptor<IMqttActionListener> actionListener = ArgumentCaptor.forClass(IMqttActionListener.class);
 
         // When
-        final Flowable<PublishToken> obs = factory.create(topic, msg);
+        final Single<PublishToken> obs = factory.create(topic, msg);
 
         // Then
         Assert.assertNotNull(obs);
@@ -80,14 +80,14 @@ public class PublishObservableFactoryTest {
                 Mockito.any(PublishObservableFactory.PublishActionListener.class)))
         .thenThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED));
         final PublishObservableFactory factory = new PublishObservableFactory(client);
-        final Flowable<PublishToken> obs = factory.create("topic1", Mockito.mock(MqttMessage.class));
-        obs.blockingFirst();
+        final Single<PublishToken> obs = factory.create("topic1", Mockito.mock(MqttMessage.class));
+        obs.blockingGet();
     }
 
     @Test
     public void whenOnSuccessIsCalledThenObserverOnNextAndOnCompletedAreCalled() throws Exception {
         @SuppressWarnings("unchecked")
-        final FlowableEmitter<MqttToken> observer = Mockito.mock(FlowableEmitter.class);
+        final SingleEmitter<MqttToken> observer = Mockito.mock(SingleEmitter.class);
         final PublishActionListener listener = new PublishObservableFactory.PublishActionListener(observer);
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
         Mockito.when(client.getClientId()).thenReturn("client_id");
@@ -99,8 +99,7 @@ public class PublishObservableFactoryTest {
         Mockito.when(iMqttDeliveryToken.getTopics()).thenReturn(new String[]{"topic"});
         final ArgumentCaptor<MqttToken> publishToken = ArgumentCaptor.forClass(MqttToken.class);
         listener.onSuccess(iMqttDeliveryToken);
-        Mockito.verify(observer).onNext(publishToken.capture());
-        Mockito.verify(observer).onComplete();
+        Mockito.verify(observer).onSuccess(publishToken.capture());
         Assert.assertNotNull(iMqttDeliveryToken);
         Assert.assertNotNull(publishToken);
         Assert.assertNotNull(publishToken.getValue().getClientId());

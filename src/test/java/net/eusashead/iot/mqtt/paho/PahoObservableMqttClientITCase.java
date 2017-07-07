@@ -37,7 +37,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import io.reactivex.Completable;
-import io.reactivex.Flowable;
+import io.reactivex.Single;
 import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.PublishToken;
 
@@ -226,7 +226,7 @@ public class PahoObservableMqttClientITCase {
 
         // Publish the message
         MqttMessage msg = MqttMessage.create(0, new byte[] { 'a', 'b', 'c' }, 1, false);
-        Flowable<PublishToken> obs = this.observableClient.publish(TOPIC, msg);
+        Single<PublishToken> obs = this.observableClient.publish(TOPIC, msg);
 
         // Subscribe for result
         obs.subscribe(r -> {

@@ -23,6 +23,7 @@ import io.reactivex.Completable;
  */
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 /**
  * RxJava MQTT API
@@ -49,7 +50,7 @@ public interface ObservableMqttClient {
 
     Completable disconnect();
 
-    Flowable<PublishToken> publish(String topic, MqttMessage msg);
+    Single<PublishToken> publish(String topic, MqttMessage msg);
 
     Flowable<MqttMessage> subscribe(String[] topics, int[] qos);
 

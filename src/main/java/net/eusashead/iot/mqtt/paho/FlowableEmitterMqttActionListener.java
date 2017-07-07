@@ -21,29 +21,26 @@ package net.eusashead.iot.mqtt.paho;
  */
 
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
 
 import io.reactivex.FlowableEmitter;
 
-public abstract class FlowableEmitterMqttActionListener<T> implements IMqttActionListener {
-
-    protected final static Logger LOGGER = Logger.getLogger(FlowableEmitterMqttActionListener.class.getName());
+public abstract class FlowableEmitterMqttActionListener<T> extends BaseEmitterMqttActionListener {
 
     protected final FlowableEmitter<? super T> emitter;
     
     public FlowableEmitterMqttActionListener(final FlowableEmitter<? super T> emitter) {
         this.emitter = Objects.requireNonNull(emitter);
     }
-
+    
     @Override
-    public void onFailure(final IMqttToken asyncActionToken, final Throwable exception) {
-        if (LOGGER.isLoggable(Level.SEVERE)) {
-            LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
-        }
-        emitter.onError(exception);
+    public OnError getOnError() {
+        return new OnError() {
+            
+            @Override
+            public void onError(Throwable t) {
+                emitter.onError(t);
+            }
+        };
     }
+
 }

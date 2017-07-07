@@ -1,5 +1,7 @@
 package net.eusashead.iot.mqtt.paho;
 
+import java.util.Objects;
+
 /*
  * #[license]
  * rxmqtt
@@ -27,9 +29,8 @@ import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
 import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.PublishToken;
 
@@ -37,10 +38,23 @@ public class PublishObservableFactory extends BaseObservableFactory {
 
     private final static Logger LOGGER = Logger.getLogger(PublishObservableFactory.class.getName());
 
-    static final class PublishActionListener extends FlowableEmitterMqttActionListener<PublishToken> {
+    static final class PublishActionListener extends BaseEmitterMqttActionListener {
 
-        public PublishActionListener(final FlowableEmitter<? super PublishToken> observer) {
-            super(observer);
+        private final SingleEmitter<? super PublishToken> emitter;
+        
+        public PublishActionListener(final SingleEmitter<? super PublishToken> emitter) {
+            this.emitter = Objects.requireNonNull(emitter);
+        }
+        
+        @Override
+        public OnError getOnError() {
+            return new OnError() {
+                
+                @Override
+                public void onError(Throwable t) {
+                    emitter.onError(t);
+                }
+            };
         }
 
         @Override
@@ -69,8 +83,7 @@ public class PublishObservableFactory extends BaseObservableFactory {
                 }
                 
             };
-            emitter.onNext(b);
-            emitter.onComplete();
+            emitter.onSuccess(b);
         }
     }
 
@@ -78,19 +91,19 @@ public class PublishObservableFactory extends BaseObservableFactory {
         super(client);
     }
 
-    public Flowable<PublishToken> create(final String topic,
+    public Single<PublishToken> create(final String topic,
             final MqttMessage msg) {
-        return Flowable.create(observer -> {
+        return Single.create(emitter -> {
             try {
                 client.publish(topic, msg.getPayload(), msg.getQos(),
-                        msg.isRetained(), null, new PublishActionListener(observer));
+                        msg.isRetained(), null, new PublishActionListener(emitter));
             } catch (MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
                 }
-                observer.onError(exception);
+                emitter.onError(exception);
             }
-        }, BackpressureStrategy.BUFFER);
+        });
     }
 
 }

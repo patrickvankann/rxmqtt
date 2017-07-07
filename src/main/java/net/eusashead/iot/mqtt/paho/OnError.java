@@ -4,7 +4,7 @@ package net.eusashead.iot.mqtt.paho;
  * #[license]
  * rxmqtt
  * %%
- * Copyright (C) 2013 - 2016 Eusa's Head
+ * Copyright (C) 2013 - 2017 Eusa's Head
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,27 +20,8 @@ package net.eusashead.iot.mqtt.paho;
  * %[license]
  */
 
-import java.util.Objects;
+public interface OnError {
 
-import io.reactivex.CompletableEmitter;
-
-public abstract class CompletableEmitterMqttActionListener extends BaseEmitterMqttActionListener {
-
-    protected final CompletableEmitter emitter;
-    
-    public CompletableEmitterMqttActionListener(final CompletableEmitter emitter) {
-        this.emitter = Objects.requireNonNull(emitter);
-    }
-    
-    @Override
-    public OnError getOnError() {
-        return new OnError() {
-            
-            @Override
-            public void onError(Throwable t) {
-                emitter.onError(t);
-            }
-        };
-    }
+    void onError(Throwable exception);
 
 }
