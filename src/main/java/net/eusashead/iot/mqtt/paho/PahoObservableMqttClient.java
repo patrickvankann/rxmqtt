@@ -42,12 +42,12 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
 
         private final IMqttAsyncClient client;
         private MqttConnectOptions connectOptions;
-        private CloseObservableFactory closeFactory;
-        private ConnectObservableFactory connectFactory;
-        private DisconnectObservableFactory disconnectFactory;
-        private PublishObservableFactory publishFactory;
-        private SubscribeObservableFactory subscribeFactory;
-        private UnsubscribeObservableFactory unsubscribeFactory;
+        private CloseFactory closeFactory;
+        private ConnectFactory connectFactory;
+        private DisconnectFactory disconnectFactory;
+        private PublishFactory publishFactory;
+        private SubscribeFactory subscribeFactory;
+        private UnsubscribeFactory unsubscribeFactory;
         
         public Builder(final String brokerUri) throws MqttException {
             this(new MqttAsyncClient(brokerUri, UUID.randomUUID().toString()));
@@ -60,12 +60,12 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
         public Builder(final IMqttAsyncClient client) {
             this.client = client;
             this.connectOptions = new MqttConnectOptions();
-            this.closeFactory = new CloseObservableFactory(client);
-            this.connectFactory = new ConnectObservableFactory(this.client, this.connectOptions);
-            this.disconnectFactory = new DisconnectObservableFactory(client);
-            this.publishFactory = new PublishObservableFactory(client);
-            this.subscribeFactory = new SubscribeObservableFactory(client);
-            this.unsubscribeFactory = new UnsubscribeObservableFactory(client);
+            this.closeFactory = new CloseFactory(client);
+            this.connectFactory = new ConnectFactory(this.client, this.connectOptions);
+            this.disconnectFactory = new DisconnectFactory(client);
+            this.publishFactory = new PublishFactory(client);
+            this.subscribeFactory = new SubscribeFactory(client);
+            this.unsubscribeFactory = new UnsubscribeFactory(client);
         }
 
         public IMqttAsyncClient getClient() {
@@ -76,62 +76,62 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
             return connectOptions;
         }
 
-        public CloseObservableFactory getCloseFactory() {
+        public CloseFactory getCloseFactory() {
             return closeFactory;
         }
 
-        public ConnectObservableFactory getConnectFactory() {
+        public ConnectFactory getConnectFactory() {
             return connectFactory;
         }
 
-        public DisconnectObservableFactory getDisconnectFactory() {
+        public DisconnectFactory getDisconnectFactory() {
             return disconnectFactory;
         }
 
-        public PublishObservableFactory getPublishFactory() {
+        public PublishFactory getPublishFactory() {
             return publishFactory;
         }
 
-        public SubscribeObservableFactory getSubscribeFactory() {
+        public SubscribeFactory getSubscribeFactory() {
             return subscribeFactory;
         }
 
-        public UnsubscribeObservableFactory getUnsubscribeFactory() {
+        public UnsubscribeFactory getUnsubscribeFactory() {
             return unsubscribeFactory;
         }
         
         public Builder setConnectOptions(final MqttConnectOptions connectOptions) {
             this.connectOptions = connectOptions;
-            this.connectFactory = new ConnectObservableFactory(this.client, this.connectOptions);
+            this.connectFactory = new ConnectFactory(this.client, this.connectOptions);
             return this;
         }
 
-        public Builder setCloseFactory(CloseObservableFactory closeFactory) {
+        public Builder setCloseFactory(CloseFactory closeFactory) {
             this.closeFactory = closeFactory;
             return this;
         }
 
-        public Builder setConnectFactory(ConnectObservableFactory connectFactory) {
+        public Builder setConnectFactory(ConnectFactory connectFactory) {
             this.connectFactory = connectFactory;
             return this;
         }
 
-        public Builder setDisconnectFactory(DisconnectObservableFactory disconnectFactory) {
+        public Builder setDisconnectFactory(DisconnectFactory disconnectFactory) {
             this.disconnectFactory = disconnectFactory;
             return this;
         }
 
-        public Builder setPublishFactory(PublishObservableFactory publishFactory) {
+        public Builder setPublishFactory(PublishFactory publishFactory) {
             this.publishFactory = publishFactory;
             return this;
         }
 
-        public Builder setSubscribeFactory(SubscribeObservableFactory subscribeFactory) {
+        public Builder setSubscribeFactory(SubscribeFactory subscribeFactory) {
             this.subscribeFactory = subscribeFactory;
             return this;
         }
 
-        public Builder setUnsubscribeFactory(UnsubscribeObservableFactory unsubscribeFactory) {
+        public Builder setUnsubscribeFactory(UnsubscribeFactory unsubscribeFactory) {
             this.unsubscribeFactory = unsubscribeFactory;
             return this;
         }
@@ -144,17 +144,17 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
     }
 
     private final IMqttAsyncClient client;
-    private final CloseObservableFactory closeFactory;
-    private final ConnectObservableFactory connectFactory;
-    private final DisconnectObservableFactory disconnectFactory;
-    private final PublishObservableFactory publishFactory;
-    private final SubscribeObservableFactory subscribeFactory;
-    private final UnsubscribeObservableFactory unsubscribeFactory;
+    private final CloseFactory closeFactory;
+    private final ConnectFactory connectFactory;
+    private final DisconnectFactory disconnectFactory;
+    private final PublishFactory publishFactory;
+    private final SubscribeFactory subscribeFactory;
+    private final UnsubscribeFactory unsubscribeFactory;
 
-    private PahoObservableMqttClient(final IMqttAsyncClient client, final CloseObservableFactory closeFactory,
-            final ConnectObservableFactory connectFactory, final DisconnectObservableFactory disconnectFactory,
-            final PublishObservableFactory publishFactory, final SubscribeObservableFactory subscribeFactory,
-            final UnsubscribeObservableFactory unsubscribeFactory) {
+    private PahoObservableMqttClient(final IMqttAsyncClient client, final CloseFactory closeFactory,
+            final ConnectFactory connectFactory, final DisconnectFactory disconnectFactory,
+            final PublishFactory publishFactory, final SubscribeFactory subscribeFactory,
+            final UnsubscribeFactory unsubscribeFactory) {
         this.client = Objects.requireNonNull(client);
         this.closeFactory = Objects.requireNonNull(closeFactory);
         this.connectFactory = Objects.requireNonNull(connectFactory);

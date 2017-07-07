@@ -25,26 +25,27 @@ public interface MqttToken {
     String getClientId();
 
     /**
-     * Returns the topic string(s) for the action being tracked by this
-     * token. If the action has not been initiated or the action has not
-     * topic associated with it such as connect then null will be returned.
+     * Returns the topic string for the this
+     * token or null if nothing has been published
      *
-     * @return the topic string(s) for the subscribe being tracked by this token or null
+     * @return {@link String} topics for the token or null
      */
     String[] getTopics();
 
     /**
-     * Returns the message ID of the message that is associated with the token.
-     * A message id of zero will be returned for tokens associated with
-     * connect, disconnect and ping operations as there can only ever
-     * be one of these outstanding at a time. For other operations
-     * the MQTT message id flowed over the network.
+     * Returns the identifier for the message
+     * associated with this token
+     * 
+     * @return {@link String} message identifier
      */
     public int getMessageId();
     
     
     /**
-     * Returns the session present flag from a connack 
+     * Whether a session is present for 
+     * this topic
+     * 
+     * @return <code>true</code> if session present or <code>false</code> otherwise
      */
     public boolean getSessionPresent();
     

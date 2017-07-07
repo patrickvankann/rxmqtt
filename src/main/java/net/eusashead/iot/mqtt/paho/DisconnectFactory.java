@@ -20,55 +20,48 @@ package net.eusashead.iot.mqtt.paho;
  * %[license]
  */
 
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableEmitter;
 
-public class ConnectObservableFactory extends BaseObservableFactory {
+public class DisconnectFactory extends BaseMqttActionFactory {
     
-    static final class ConnectActionListener extends CompletableEmitterMqttActionListener {
-        
-        public ConnectActionListener(final CompletableEmitter emitter) {
+    private final static Logger LOGGER = Logger.getLogger(DisconnectFactory.class.getName());
+
+    static final class DisconnectActionListener extends CompletableEmitterMqttActionListener {
+
+        public DisconnectActionListener(final CompletableEmitter emitter) {
             super(emitter);
         }
-        
+
         @Override
         public void onSuccess(IMqttToken asyncActionToken) {
             emitter.onComplete();
         }
     }
 
-    private final MqttConnectOptions options;
-    
-    private final static Logger LOGGER = Logger.getLogger(ConnectObservableFactory.class.getName());
-
-    public ConnectObservableFactory(final IMqttAsyncClient client, final MqttConnectOptions options) {
+    public DisconnectFactory(final IMqttAsyncClient client) {
         super(client);
-        this.options = Objects.requireNonNull(options);
     }
 
     public Completable create() {
         return Completable.create(emitter -> {
-            try {
-                client.connect(options, null, new ConnectActionListener(emitter));
-            } catch (MqttException exception) {
-                if (LOGGER.isLoggable(Level.SEVERE)) {
-                    LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
+            
+                try {
+                    client.disconnect(null, new DisconnectActionListener(emitter));
+                } catch (MqttException exception) {
+                    if (LOGGER.isLoggable(Level.SEVERE)) {
+                        LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
+                    }
+                    emitter.onError(exception);
                 }
-                emitter.onError(exception);
-            }
         });
     }
 
-    public MqttConnectOptions getOptions() {
-        return options;
-    }
 }

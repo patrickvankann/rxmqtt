@@ -100,7 +100,7 @@ public class PahoObservableMqttClientTest {
     @Test
     public void whenConnectIsCalledThenCreateIsCalled() {
         final Builder builder = builderWithMocks("clientId");
-        final ConnectObservableFactory factory = builder.getConnectFactory();
+        final ConnectFactory factory = builder.getConnectFactory();
         final Completable expected = Completable.complete();
         Mockito.when(factory.create()).thenReturn(expected);
         final PahoObservableMqttClient target = builder.build();
@@ -119,7 +119,7 @@ public class PahoObservableMqttClientTest {
     @Test
     public void whenDisconnectIsCalledThenCreateIsCalled() {
         final Builder builder = builderWithMocks("clientId");
-        final DisconnectObservableFactory factory = builder.getDisconnectFactory();
+        final DisconnectFactory factory = builder.getDisconnectFactory();
         final Completable expected = Completable.complete();
         Mockito.when(factory.create()).thenReturn(expected);
         final PahoObservableMqttClient target = builder.build();
@@ -138,7 +138,7 @@ public class PahoObservableMqttClientTest {
     @Test
     public void whenPublishCalledThenCreateIsCalled() {
         final Builder builder = builderWithMocks("clientId");
-        final PublishObservableFactory factory = builder.getPublishFactory();
+        final PublishFactory factory = builder.getPublishFactory();
         final Single<PublishToken> expected = Single.just(Mockito.mock(PublishToken.class));
         final String topic = "topic";
         final MqttMessage message = Mockito.mock(MqttMessage.class);
@@ -159,7 +159,7 @@ public class PahoObservableMqttClientTest {
     @Test
     public void whenSubscribeIsCalledThenCreateIsCalled() {
         final Builder builder = builderWithMocks("clientId");
-        final SubscribeObservableFactory factory = builder.getSubscribeFactory();
+        final SubscribeFactory factory = builder.getSubscribeFactory();
         final Flowable<MqttMessage> expected = Flowable.just(Mockito.mock(MqttMessage.class));
         final String[] topic = new String[] { "topic" };
         final int[] qos = new int[]{ 1 };
@@ -180,7 +180,7 @@ public class PahoObservableMqttClientTest {
     @Test
     public void whenUnsubscribeIsCalledThenCreateIsCalled() {
         final Builder builder = builderWithMocks("clientId");
-        final UnsubscribeObservableFactory factory = builder.getUnsubscribeFactory();
+        final UnsubscribeFactory factory = builder.getUnsubscribeFactory();
         final Completable expected = Completable.complete();
         final String[] topic = new String[] { "topic" };
         Mockito.when(factory.create(topic)).thenReturn(expected);
@@ -193,12 +193,12 @@ public class PahoObservableMqttClientTest {
     private Builder builderWithMocks(final String expectedClientId) {
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
         Mockito.when(client.getClientId()).thenReturn(expectedClientId);
-        final CloseObservableFactory closeFactory = Mockito.mock(CloseObservableFactory.class);
-        final ConnectObservableFactory connectFactory = Mockito.mock(ConnectObservableFactory.class);
-        final DisconnectObservableFactory disconnectFactory = Mockito.mock(DisconnectObservableFactory.class);
-        final PublishObservableFactory publishFactory = Mockito.mock(PublishObservableFactory.class);
-        final SubscribeObservableFactory subscribeFactory = Mockito.mock(SubscribeObservableFactory.class);
-        final UnsubscribeObservableFactory unsubscribeFactory = Mockito.mock(UnsubscribeObservableFactory.class);
+        final CloseFactory closeFactory = Mockito.mock(CloseFactory.class);
+        final ConnectFactory connectFactory = Mockito.mock(ConnectFactory.class);
+        final DisconnectFactory disconnectFactory = Mockito.mock(DisconnectFactory.class);
+        final PublishFactory publishFactory = Mockito.mock(PublishFactory.class);
+        final SubscribeFactory subscribeFactory = Mockito.mock(SubscribeFactory.class);
+        final UnsubscribeFactory unsubscribeFactory = Mockito.mock(UnsubscribeFactory.class);
         return new PahoObservableMqttClient.Builder(client)
                 .setCloseFactory(closeFactory)
                 .setConnectFactory(connectFactory)

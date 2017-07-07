@@ -37,10 +37,10 @@ import org.mockito.Mockito;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableEmitter;
-import net.eusashead.iot.mqtt.paho.UnsubscribeObservableFactory.UnsubscribeActionListener;
+import net.eusashead.iot.mqtt.paho.UnsubscribeFactory.UnsubscribeActionListener;
 
 @RunWith(JUnit4.class)
-public class UnsubscribeObservableFactoryTest {
+public class UnsubscribeFactoryTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -49,7 +49,7 @@ public class UnsubscribeObservableFactoryTest {
     public void whenCreateIsCalledThenAnObservableIsReturned() throws Exception {
         // Given
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
-        final UnsubscribeObservableFactory factory = new UnsubscribeObservableFactory(client);
+        final UnsubscribeFactory factory = new UnsubscribeFactory(client);
         final String[] topics = new String[]{ "topic1", "topic2" };
         final ArgumentCaptor<IMqttActionListener> actionListener = ArgumentCaptor.forClass(IMqttActionListener.class);
 
@@ -61,7 +61,7 @@ public class UnsubscribeObservableFactoryTest {
         obs.subscribe();
         Mockito.verify(client).unsubscribe(Mockito.same(topics), Mockito.isNull(),
                 actionListener.capture());
-        Assert.assertTrue(actionListener.getValue() instanceof UnsubscribeObservableFactory.UnsubscribeActionListener);
+        Assert.assertTrue(actionListener.getValue() instanceof UnsubscribeFactory.UnsubscribeActionListener);
     }
 
     @Test
@@ -69,9 +69,9 @@ public class UnsubscribeObservableFactoryTest {
         expectedException.expectCause(isA(MqttException.class));
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
         Mockito.when(client.unsubscribe(Mockito.any(String[].class), Mockito.isNull(),
-                Mockito.any(UnsubscribeObservableFactory.UnsubscribeActionListener.class)))
+                Mockito.any(UnsubscribeFactory.UnsubscribeActionListener.class)))
         .thenThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED));
-        final UnsubscribeObservableFactory factory = new UnsubscribeObservableFactory(client);
+        final UnsubscribeFactory factory = new UnsubscribeFactory(client);
         final Completable obs = factory.create(new String[]{ "topic1", "topic2" });
         obs.blockingAwait();
     }
@@ -79,7 +79,7 @@ public class UnsubscribeObservableFactoryTest {
     @Test
     public void whenOnSuccessIsCalledThenObserverOnNextAndOnCompletedAreCalled() throws Exception {
         final CompletableEmitter observer = Mockito.mock(CompletableEmitter.class);
-        final UnsubscribeActionListener listener = new UnsubscribeObservableFactory.UnsubscribeActionListener(observer);
+        final UnsubscribeActionListener listener = new UnsubscribeFactory.UnsubscribeActionListener(observer);
         final IMqttToken asyncActionToken = Mockito.mock(IMqttToken.class);
         listener.onSuccess(asyncActionToken);
         Mockito.verify(observer).onComplete();

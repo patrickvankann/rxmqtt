@@ -38,5 +38,12 @@ public abstract class BaseEmitterMqttActionListener implements IMqttActionListen
         getOnError().onError(exception);
     }
 
+    /**
+     * Return the {@link OnError} implementation
+     * for this listener so that the onFailure()
+     * method can call onError()
+     * 
+     * @return {@link OnError} implementation.
+     */
     public abstract OnError getOnError();
 }

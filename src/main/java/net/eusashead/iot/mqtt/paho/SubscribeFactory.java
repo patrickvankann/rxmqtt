@@ -34,7 +34,7 @@ import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import net.eusashead.iot.mqtt.MqttMessage;
 
-public class SubscribeObservableFactory extends BaseObservableFactory {
+public class SubscribeFactory extends BaseMqttActionFactory {
     
     static final class SubscribeActionListener extends FlowableEmitterMqttActionListener<MqttMessage> {
 
@@ -50,7 +50,7 @@ public class SubscribeObservableFactory extends BaseObservableFactory {
 
     private final static Logger LOGGER = Logger.getLogger(SubscribeActionListener.class.getName());
 
-    public SubscribeObservableFactory(final IMqttAsyncClient client) {
+    public SubscribeFactory(final IMqttAsyncClient client) {
         super(client);
     }
 

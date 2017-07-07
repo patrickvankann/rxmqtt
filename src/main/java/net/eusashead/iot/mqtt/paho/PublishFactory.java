@@ -34,9 +34,9 @@ import io.reactivex.SingleEmitter;
 import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.PublishToken;
 
-public class PublishObservableFactory extends BaseObservableFactory {
+public class PublishFactory extends BaseMqttActionFactory {
 
-    private final static Logger LOGGER = Logger.getLogger(PublishObservableFactory.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(PublishFactory.class.getName());
 
     static final class PublishActionListener extends BaseEmitterMqttActionListener {
 
@@ -87,7 +87,7 @@ public class PublishObservableFactory extends BaseObservableFactory {
         }
     }
 
-    public PublishObservableFactory(final IMqttAsyncClient client) {
+    public PublishFactory(final IMqttAsyncClient client) {
         super(client);
     }
 

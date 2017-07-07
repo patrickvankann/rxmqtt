@@ -20,8 +20,30 @@ package net.eusashead.iot.mqtt.paho;
  * %[license]
  */
 
+/**
+ * This interface is needed because
+ * although FlowableEmitter, CompletableEmitter
+ * and SingleEmitter all have an onError(Throwable)
+ * method there is no super-interface containing this
+ * method. 
+ * 
+ * Because the {@link BaseEmitterMqttActionListener} 
+ * class logs errors and calls onError(Throwable)
+ * for emitters of all of the above types, a wrapper
+ * is needed that exposes onError(Throwable) and
+ * defers it to the wrapped RxJava type.
+ *  
+ * @author patvanka
+ *
+ */
 public interface OnError {
 
+    /**
+     * Action to take in the event of
+     * an error occurring
+     * 
+     * @param exception {@link Throwable} 
+     */
     void onError(Throwable exception);
 
 }

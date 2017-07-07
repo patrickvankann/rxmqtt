@@ -37,10 +37,10 @@ import org.mockito.Mockito;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableEmitter;
-import net.eusashead.iot.mqtt.paho.DisconnectObservableFactory.DisconnectActionListener;
+import net.eusashead.iot.mqtt.paho.DisconnectFactory.DisconnectActionListener;
 
 @RunWith(JUnit4.class)
-public class DisconnectObservableFactoryTest {
+public class DisconnectFactoryTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -49,7 +49,7 @@ public class DisconnectObservableFactoryTest {
     public void whenCreateIsCalledThenAnObservableIsReturned() throws Exception {
         // Given
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
-        final DisconnectObservableFactory factory = new DisconnectObservableFactory(client);
+        final DisconnectFactory factory = new DisconnectFactory(client);
         final ArgumentCaptor<IMqttActionListener> actionListener = ArgumentCaptor.forClass(IMqttActionListener.class);
 
         // When
@@ -60,7 +60,7 @@ public class DisconnectObservableFactoryTest {
         obs.subscribe();
         Mockito.verify(client).disconnect(Mockito.isNull(),
                 actionListener.capture());
-        Assert.assertTrue(actionListener.getValue() instanceof DisconnectObservableFactory.DisconnectActionListener);
+        Assert.assertTrue(actionListener.getValue() instanceof DisconnectFactory.DisconnectActionListener);
     }
 
     @Test
@@ -68,9 +68,9 @@ public class DisconnectObservableFactoryTest {
         expectedException.expectCause(isA(MqttException.class));
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
         Mockito.when(client.disconnect(Mockito.isNull(),
-                Mockito.any(DisconnectObservableFactory.DisconnectActionListener.class)))
+                Mockito.any(DisconnectFactory.DisconnectActionListener.class)))
         .thenThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED));
-        final DisconnectObservableFactory factory = new DisconnectObservableFactory(client);
+        final DisconnectFactory factory = new DisconnectFactory(client);
         final Completable obs = factory.create();
         obs.blockingAwait();
     }
@@ -78,7 +78,7 @@ public class DisconnectObservableFactoryTest {
     @Test
     public void whenOnSuccessIsCalledThenObserverOnNextAndOnCompletedAreCalled() throws Exception {
         final CompletableEmitter observer = Mockito.mock(CompletableEmitter.class);
-        final DisconnectActionListener listener = new DisconnectObservableFactory.DisconnectActionListener(observer);
+        final DisconnectActionListener listener = new DisconnectFactory.DisconnectActionListener(observer);
         final IMqttToken asyncActionToken = Mockito.mock(IMqttToken.class);
         listener.onSuccess(asyncActionToken);
         Mockito.verify(observer).onComplete();

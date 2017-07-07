@@ -22,10 +22,7 @@ package net.eusashead.iot.mqtt.paho;
 
 import static org.hamcrest.Matchers.isA;
 
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -33,53 +30,40 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import io.reactivex.Completable;
-import io.reactivex.CompletableEmitter;
-import net.eusashead.iot.mqtt.paho.ConnectObservableFactory.ConnectActionListener;
+
 
 @RunWith(JUnit4.class)
-public class ConnectObservableFactoryTest {
-    
+public class CloseFactoryTest {
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void whenCreateIsCalledThenAnObservableIsReturned() throws Exception {
+        // Given
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
-        final MqttConnectOptions options = Mockito.mock(MqttConnectOptions.class);
-        final ConnectObservableFactory factory = new ConnectObservableFactory(client, options);
-        final ArgumentCaptor<IMqttActionListener> actionListener = ArgumentCaptor.forClass(IMqttActionListener.class);
+        final CloseFactory factory = new CloseFactory(client);
+
+        // When
         final Completable obs = factory.create();
+
+        // Then
         Assert.assertNotNull(obs);
         obs.subscribe();
-        Mockito.verify(client).connect(Mockito.same(options), Mockito.isNull(),
-                actionListener.capture());
-        Assert.assertTrue(actionListener.getValue() instanceof ConnectObservableFactory.ConnectActionListener);
+        Mockito.verify(client).close();
     }
 
     @Test
     public void whenCreateIsCalledAndAnErrorOccursThenObserverOnErrorIsCalled() throws Throwable {
         expectedException.expectCause(isA(MqttException.class));
-        final MqttConnectOptions options = Mockito.mock(MqttConnectOptions.class);
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
-        Mockito.when(client.connect(Mockito.same(options), Mockito.isNull(),
-                Mockito.any(ConnectObservableFactory.ConnectActionListener.class)))
-                .thenThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED));
-        final ConnectObservableFactory factory = new ConnectObservableFactory(client, options);
+        Mockito.doThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED)).when(client).close();
+        final CloseFactory factory = new CloseFactory(client);
         final Completable obs = factory.create();
         obs.blockingAwait();
     }
 
-    @Test
-    public void whenOnSuccessIsCalledThenObserverOnNextAndOnCompletedAreCalled() throws Exception {
-        final CompletableEmitter observer = Mockito.mock(CompletableEmitter.class);
-        final ConnectActionListener listener = new ConnectObservableFactory.ConnectActionListener(observer);
-        final IMqttToken asyncActionToken = Mockito.mock(IMqttToken.class);
-        listener.onSuccess(asyncActionToken);
-        Mockito.verify(observer).onComplete();
-    }
-    
 }

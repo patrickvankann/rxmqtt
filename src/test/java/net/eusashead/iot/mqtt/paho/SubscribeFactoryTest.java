@@ -39,7 +39,7 @@ import io.reactivex.Flowable;
 import net.eusashead.iot.mqtt.MqttMessage;
 
 @RunWith(JUnit4.class)
-public class SubscribeObservableFactoryTest {
+public class SubscribeFactoryTest {
     
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -47,7 +47,7 @@ public class SubscribeObservableFactoryTest {
     @Test
     public void whenCreateIsCalledThenAnObservableIsReturned() throws Exception {
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
-        final SubscribeObservableFactory factory = new SubscribeObservableFactory(client);
+        final SubscribeFactory factory = new SubscribeFactory(client);
         final ArgumentCaptor<IMqttActionListener> actionListener = ArgumentCaptor.forClass(IMqttActionListener.class);
         final ArgumentCaptor<IMqttMessageListener[]> messageListener = ArgumentCaptor.forClass(IMqttMessageListener[].class);
         final String[] topics = new String[]{ "topic1", "topic2" };
@@ -60,7 +60,7 @@ public class SubscribeObservableFactoryTest {
                 Mockito.isNull(),
                 actionListener.capture(),
                 messageListener.capture());
-        Assert.assertTrue(actionListener.getValue() instanceof SubscribeObservableFactory.SubscribeActionListener);
+        Assert.assertTrue(actionListener.getValue() instanceof SubscribeFactory.SubscribeActionListener);
         Assert.assertTrue(messageListener.getValue() instanceof SubscriberMqttMessageListener[]);
         Assert.assertEquals(2, messageListener.getValue().length);
     }
@@ -79,7 +79,7 @@ public class SubscribeObservableFactoryTest {
                 actionListener.capture(),
                 messageListener.capture()))
                 .thenThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED));
-        final SubscribeObservableFactory factory = new SubscribeObservableFactory(client);
+        final SubscribeFactory factory = new SubscribeFactory(client);
         final Flowable<MqttMessage> obs = factory.create(topics, qos);
         obs.blockingFirst();
     }

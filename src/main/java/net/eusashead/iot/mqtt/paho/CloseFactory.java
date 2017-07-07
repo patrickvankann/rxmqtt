@@ -4,7 +4,7 @@ package net.eusashead.iot.mqtt.paho;
  * #[license]
  * rxmqtt
  * %%
- * Copyright (C) 2013 - 2016 Eusa's Head
+ * Copyright (C) 2013 - 2017 Eusa's Head
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,20 +20,26 @@ package net.eusashead.iot.mqtt.paho;
  * %[license]
  */
 
-import java.util.Objects;
-
 import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 
-public class BaseObservableFactory {
+import io.reactivex.Completable;
+import io.reactivex.functions.Action;
 
-    protected final IMqttAsyncClient client;
-
-    public BaseObservableFactory(final IMqttAsyncClient client) {
-        this.client = Objects.requireNonNull(client);
+public class CloseFactory extends BaseMqttActionFactory {
+    
+    public CloseFactory(final IMqttAsyncClient client) {
+        super(client);
     }
 
-    public IMqttAsyncClient getMqttAsyncClient() {
-        return this.client;
-    }
+    public Completable create() {
 
+        return Completable.fromAction(new Action() {
+            
+            @Override
+            public void run() throws MqttException {
+                client.close();
+            }
+        });
+    }
 }

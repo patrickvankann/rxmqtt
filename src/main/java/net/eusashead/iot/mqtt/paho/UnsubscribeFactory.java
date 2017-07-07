@@ -30,13 +30,13 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import io.reactivex.Completable;
 import io.reactivex.CompletableEmitter;
 
-public class DisconnectObservableFactory extends BaseObservableFactory {
+public class UnsubscribeFactory extends BaseMqttActionFactory {
     
-    private final static Logger LOGGER = Logger.getLogger(DisconnectObservableFactory.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(UnsubscribeFactory.class.getName());
 
-    static final class DisconnectActionListener extends CompletableEmitterMqttActionListener {
+    static final class UnsubscribeActionListener extends CompletableEmitterMqttActionListener {
 
-        public DisconnectActionListener(final CompletableEmitter emitter) {
+        public UnsubscribeActionListener(final CompletableEmitter emitter) {
             super(emitter);
         }
 
@@ -45,23 +45,23 @@ public class DisconnectObservableFactory extends BaseObservableFactory {
             emitter.onComplete();
         }
     }
-
-    public DisconnectObservableFactory(final IMqttAsyncClient client) {
+    
+    public UnsubscribeFactory(final IMqttAsyncClient client) {
         super(client);
     }
-
-    public Completable create() {
+    
+    public Completable create(final String[] topics) {
+        
         return Completable.create(emitter -> {
-            
-                try {
-                    client.disconnect(null, new DisconnectActionListener(emitter));
-                } catch (MqttException exception) {
-                    if (LOGGER.isLoggable(Level.SEVERE)) {
-                        LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
-                    }
-                    emitter.onError(exception);
+            try {
+                client.unsubscribe(topics, null, new UnsubscribeActionListener(emitter));
+            } catch (MqttException exception) {
+                if (LOGGER.isLoggable(Level.SEVERE)) {
+                    LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
                 }
+                emitter.onError(exception);
+            }
         });
     }
-
+    
 }

@@ -73,8 +73,6 @@ class BasicMqttMessage implements MqttMessage {
         return retained;
     }
 
-   
-
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder(50);

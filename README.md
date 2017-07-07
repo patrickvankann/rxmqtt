@@ -13,28 +13,28 @@ final ObservableMqttClient client = new PahoObservableMqttClient.builder(paho)
     .build();
 ```
 ## Connecting
-Asynchronously connect to the broker.
+Asynchronously connect to the broker using an RxJava `Completable`.
 
 ```java
-client.connect().subscribe(t -> {
-  // do something on connection
+client.connect().subscribe(() -> {
+  // do something on completion
 }, e -> {
   // do something on error
 });
 ```
 ## Publishing
-Asynchronously publish a message to the broker.
+Asynchronously publish a message to the broker using an RxJava `Single`.
 
 ```java
 final MqttMessage msg = MqttMessage.create(...);
 client.publish("mytopic", msg).subscribe(t -> {
-  // do something on publication
+  // do something on success
 }, e -> {
   // do something on error
 });
 ```
 ## Subscribing
-Asynchronously subscribe to a topic (or topics). For each message received, the subscriber is called with the message. The QOS level desired can be passed along with the topic.
+Asynchronously subscribe to a topic (or topics) using an RxJava `Flowable`. For each message received, the subscriber is called with the message. The QOS level desired can be passed along with the topic.
 
 ```java
 client.subscribe("mytopic", 1).subscribe(msg -> {
@@ -46,10 +46,10 @@ client.subscribe("mytopic", 1).subscribe(msg -> {
 ```
 
 ## Unsubscribing
-Asynchronously unsubscribe from a topic (or topics).
+Asynchronously unsubscribe from a topic (or topics) using an RxJava `Completable`.
 
 ```java
-client.unsubscribe("mytopic").subscribe(t -> {
+client.unsubscribe("mytopic").subscribe(() -> {
   // do something on disconnect completion
 }, e -> {
   // do something on error
@@ -57,10 +57,10 @@ client.unsubscribe("mytopic").subscribe(t -> {
 ```
 
 ## Disconnecting
-Asynchronously disconnect from the broker.
+Asynchronously disconnect from the broker using an RxJava `Completable`.
 
 ```java
-client.disconnect().subscribe(t -> {
+client.disconnect().subscribe(() -> {
   // do something on disconnect completion
 }, e -> {
   // do something on error
@@ -68,10 +68,10 @@ client.disconnect().subscribe(t -> {
 ```
 
 ## Closing
-Asynchronously close the client, releasing all resources.
+Asynchronously close the client and relase all resources using an RxJava `Completable`.
 
 ```java
-client.close().subscribe(t -> {
+client.close().subscribe(() -> {
   // do something on close completion
 }, e -> {
   // do something on error

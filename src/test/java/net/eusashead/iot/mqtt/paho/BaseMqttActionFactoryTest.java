@@ -30,7 +30,7 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 @RunWith(JUnit4.class)
-public class BaseObservableFactoryTest {
+public class BaseMqttActionFactoryTest {
     
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -38,13 +38,13 @@ public class BaseObservableFactoryTest {
     @Test
     public void whenAValidMqttAsyncClientIsSuppliedItIsConstructed() {
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
-        final BaseObservableFactory factory = new BaseObservableFactory(client);
+        final BaseMqttActionFactory factory = new BaseMqttActionFactory(client);
         Assert.assertEquals(client, factory.getMqttAsyncClient());
     }
     
     @Test(expected=NullPointerException.class)
     public void whenANullMqttAsyncClientIsSuppliedAnExceptionIsThrown() {
-        new BaseObservableFactory(null);
+        new BaseMqttActionFactory(null);
     }
     
 }
