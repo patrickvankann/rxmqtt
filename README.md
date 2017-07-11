@@ -24,7 +24,7 @@ The default Paho implementation of `ObservableMqttClient` can be obtained like t
 
 ```java
 final IMqttAsyncClient paho = new MqttAsyncClient(...);
-final ObservableMqttClient client = new PahoObservableMqttClient.builder(paho)
+final ObservableMqttClient client = PahoObservableMqttClient.builder(paho)
     ... // Customise
     .build();
 ```

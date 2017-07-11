@@ -21,12 +21,14 @@ package net.eusashead.iot.mqtt.paho;
  */
 
 import java.util.Objects;
-import java.util.UUID;
 
 import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
@@ -50,11 +52,15 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
         private UnsubscribeFactory unsubscribeFactory;
 
         public Builder(final String brokerUri) throws MqttException {
-            this(new MqttAsyncClient(brokerUri, UUID.randomUUID().toString()));
+            this(brokerUri, MqttAsyncClient.generateClientId());
         }
 
         public Builder(final String brokerUri, final String clientId) throws MqttException {
-            this(new MqttAsyncClient(brokerUri, clientId));
+            this(brokerUri, clientId, new MemoryPersistence());
+        }
+
+        public Builder(final String brokerUri, final String clientId, final MqttClientPersistence persistence) throws MqttException {
+            this(new MqttAsyncClient(brokerUri, clientId, persistence));
         }
 
         public Builder(final IMqttAsyncClient client) {
@@ -100,6 +106,11 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
             return unsubscribeFactory;
         }
 
+        public Builder setMqttCallback(final MqttCallback mqttCallback) {
+            this.client.setCallback(Objects.requireNonNull(mqttCallback));
+            return this;
+        }
+
         public Builder setConnectOptions(final MqttConnectOptions connectOptions) {
             this.connectOptions = connectOptions;
             this.connectFactory = new ConnectFactory(this.client, this.connectOptions);
@@ -107,38 +118,37 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
         }
 
         public Builder setCloseFactory(CloseFactory closeFactory) {
-            this.closeFactory = closeFactory;
+            this.closeFactory = Objects.requireNonNull(closeFactory);
             return this;
         }
 
         public Builder setConnectFactory(ConnectFactory connectFactory) {
-            this.connectFactory = connectFactory;
+            this.connectFactory = Objects.requireNonNull(connectFactory);
             return this;
         }
 
         public Builder setDisconnectFactory(DisconnectFactory disconnectFactory) {
-            this.disconnectFactory = disconnectFactory;
+            this.disconnectFactory = Objects.requireNonNull(disconnectFactory);
             return this;
         }
 
         public Builder setPublishFactory(PublishFactory publishFactory) {
-            this.publishFactory = publishFactory;
+            this.publishFactory = Objects.requireNonNull(publishFactory);
             return this;
         }
 
         public Builder setSubscribeFactory(SubscribeFactory subscribeFactory) {
-            this.subscribeFactory = subscribeFactory;
+            this.subscribeFactory = Objects.requireNonNull(subscribeFactory);
             return this;
         }
 
         public Builder setUnsubscribeFactory(UnsubscribeFactory unsubscribeFactory) {
-            this.unsubscribeFactory = unsubscribeFactory;
+            this.unsubscribeFactory = Objects.requireNonNull(unsubscribeFactory);
             return this;
         }
 
         public PahoObservableMqttClient build() {
-            return new PahoObservableMqttClient(client, closeFactory, connectFactory, disconnectFactory, publishFactory,
-                    subscribeFactory, unsubscribeFactory);
+            return new PahoObservableMqttClient(this);
         }
 
     }
@@ -151,17 +161,14 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
     private final SubscribeFactory subscribeFactory;
     private final UnsubscribeFactory unsubscribeFactory;
 
-    private PahoObservableMqttClient(final IMqttAsyncClient client, final CloseFactory closeFactory,
-            final ConnectFactory connectFactory, final DisconnectFactory disconnectFactory,
-            final PublishFactory publishFactory, final SubscribeFactory subscribeFactory,
-            final UnsubscribeFactory unsubscribeFactory) {
-        this.client = Objects.requireNonNull(client);
-        this.closeFactory = Objects.requireNonNull(closeFactory);
-        this.connectFactory = Objects.requireNonNull(connectFactory);
-        this.disconnectFactory = Objects.requireNonNull(disconnectFactory);
-        this.publishFactory = Objects.requireNonNull(publishFactory);
-        this.subscribeFactory = Objects.requireNonNull(subscribeFactory);
-        this.unsubscribeFactory = Objects.requireNonNull(unsubscribeFactory);
+    private PahoObservableMqttClient(final Builder builder) {
+        this.client = builder.client;
+        this.closeFactory = builder.closeFactory;
+        this.connectFactory = builder.connectFactory;
+        this.disconnectFactory = builder.disconnectFactory;
+        this.publishFactory = builder.publishFactory;
+        this.subscribeFactory = builder.subscribeFactory;
+        this.unsubscribeFactory = builder.unsubscribeFactory;
     }
 
     /*
@@ -287,7 +294,19 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
         return this.unsubscribe(new String[] { topic });
     }
 
-    public static Builder build(final IMqttAsyncClient client) {
+    public static Builder builder(final String brokerUri) throws MqttException {
+        return builder(brokerUri, MqttAsyncClient.generateClientId());
+    }
+
+    public static Builder builder(final String brokerUri, final String clientId) throws MqttException {
+        return builder(brokerUri, clientId, new MemoryPersistence());
+    }
+
+    public static Builder builder(final String brokerUri, final String clientId, final MqttClientPersistence persistence) throws MqttException {
+        return builder(new MqttAsyncClient(brokerUri, clientId, persistence));
+    }
+
+    public static Builder builder(final IMqttAsyncClient client) {
         return new Builder(client);
     }
 
