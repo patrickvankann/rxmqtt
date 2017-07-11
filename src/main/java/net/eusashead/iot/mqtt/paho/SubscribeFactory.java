@@ -49,12 +49,18 @@ public class SubscribeFactory extends BaseMqttActionFactory {
     }
 
     private final static Logger LOGGER = Logger.getLogger(SubscribeActionListener.class.getName());
-
+    
     public SubscribeFactory(final IMqttAsyncClient client) {
         super(client);
     }
 
-    public Flowable<MqttMessage> create(final String[] topics, final int[] qos) {
+    public Flowable<MqttMessage> create(final String[] topics, 
+            final int[] qos, final BackpressureStrategy backpressureStrategy) {
+        
+        Objects.requireNonNull(topics);
+        Objects.requireNonNull(qos);
+        Objects.requireNonNull(backpressureStrategy);
+        
         return Flowable.create(observer -> {
 
             // Message listeners
@@ -71,7 +77,7 @@ public class SubscribeFactory extends BaseMqttActionFactory {
                 }
                 observer.onError(exception);
             }
-        }, BackpressureStrategy.BUFFER);
+        }, backpressureStrategy);
     }
 
 }

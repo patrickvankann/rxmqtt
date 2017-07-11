@@ -35,6 +35,7 @@ import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import net.eusashead.iot.mqtt.MqttMessage;
 
@@ -52,7 +53,7 @@ public class SubscribeFactoryTest {
         final ArgumentCaptor<IMqttMessageListener[]> messageListener = ArgumentCaptor.forClass(IMqttMessageListener[].class);
         final String[] topics = new String[]{ "topic1", "topic2" };
         final int[] qos = new int[]{ 1, 2 };
-        final Flowable<MqttMessage> obs = factory.create(topics, qos);
+        final Flowable<MqttMessage> obs = factory.create(topics, qos, BackpressureStrategy.ERROR);
         Assert.assertNotNull(obs);
         obs.subscribe();
         Mockito.verify(client).subscribe(Mockito.same(topics),
@@ -80,8 +81,35 @@ public class SubscribeFactoryTest {
                 messageListener.capture()))
                 .thenThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED));
         final SubscribeFactory factory = new SubscribeFactory(client);
-        final Flowable<MqttMessage> obs = factory.create(topics, qos);
+        final Flowable<MqttMessage> obs = factory.create(topics, qos, BackpressureStrategy.ERROR);
         obs.blockingFirst();
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void whenANullTopicsIsSuppliedThenAnExceptionIsThrown() {
+        final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
+        final SubscribeFactory factory = new SubscribeFactory(client);
+        final String[] topics = null;
+        final int[] qos = new int[]{ 1, 2 };
+        factory.create(topics, qos, BackpressureStrategy.ERROR);
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void whenANullQoSIsSuppliedThenAnExceptionIsThrown() {
+        final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
+        final SubscribeFactory factory = new SubscribeFactory(client);
+        final String[] topics = new String[]{ "topic1", "topic2" };;
+        final int[] qos = null;
+        factory.create(topics, qos, BackpressureStrategy.ERROR);
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void whenANullBackpressureStrategyIsSuppliedThenAnExceptionIsThrown() {
+        final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
+        final SubscribeFactory factory = new SubscribeFactory(client);
+        final String[] topics = new String[]{ "topic1", "topic2" };
+        final int[] qos = new int[]{ 1, 2 };
+        factory.create(topics, qos, null);
     }
     
 }

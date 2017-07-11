@@ -28,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
@@ -179,10 +180,10 @@ public class PahoObservableMqttClientTest {
         final Flowable<MqttMessage> expected = Flowable.just(Mockito.mock(MqttMessage.class));
         final String[] topic = new String[] { "topic" };
         final int[] qos = new int[]{ 1 };
-        Mockito.when(factory.create(topic, qos)).thenReturn(expected);
+        Mockito.when(factory.create(topic, qos, BackpressureStrategy.BUFFER)).thenReturn(expected);
         final PahoObservableMqttClient target = builder.build();
         final Flowable<MqttMessage> actual = target.subscribe(topic, qos);
-        Mockito.verify(factory).create(topic, qos);
+        Mockito.verify(factory).create(topic, qos, BackpressureStrategy.BUFFER);
         Assert.assertEquals(expected, actual);
     }
     
