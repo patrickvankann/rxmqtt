@@ -3,7 +3,23 @@ An [RxJava](https://github.com/ReactiveX/RxJava) API for handling [MQTT](http://
 
 The main interface is `ObservableMqttClient`, which can be used to connect, publish and subscribe to a broker.
 
-## Building
+## API Changes in 1.1.0
+In the 1.0.x branch, all of the `ObservableMqttClient` methods returned `Observable<T>` objects. In many cases, with RxJava 2.0 this was no longer the ideal type to return.
+
+To support RxJava 2.0 the API has changed to make use of more appropriate reactive types.
+
+1. Methods that returned `Observable<Void>` now return `Completable`. This new type is described in the [What's Different in 2.0](https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0#completable) document for RxJava. This is really preferable and RxJava now [no longer supports null](https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0#nulls). Methods affected are connect(), disconnect(), unsubscribe() and close().
+2. The publish() method that returned a 'one-shot' `Observable<PublishToken>` now uses `Single<PublishToken>`. 
+3. The subscribe() method now returns a `Flowable<MqttMessage>` rather than an `Observable<MqttMessage>`. `Flowable<T>` is a more suitable choice for supporting [backpressure](https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0#backpressure).
+
+## Backpressure
+The subscribe() methods of `ObservableMqttClient` return a `Flowable<MqttMessage>` using the `BackpressureStrategy` provided (the default will be `BackpressureStrategy.BUFFER`. This is done via the `Flowable.create(FlowableEmitter<T>, BackpressureStrategy)` method [described in the RxJava 2 documentation](http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/Flowable.html#create(io.reactivex.FlowableOnSubscribe,%20io.reactivex.BackpressureStrategy)).
+
+If you subscribe to this `Flowable<MqttMessage>` with a `FlowableSubscriber<MqttMessage>` the `BackpressureStrategy` will be applied if you are unable to request messages fast enough. This is described [in the RxJava documentation](http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/Flowable.html#subscribe(io.reactivex.FlowableSubscriber)). 
+
+Note that the other subscribe() methods of `Flowable<T>` do not apply backpressure.
+
+## Obtaining the client
 The default Paho implementation of `ObservableMqttClient` can be obtained like this:
 
 ```java
@@ -12,6 +28,8 @@ final ObservableMqttClient client = new PahoObservableMqttClient.builder(paho)
     ... // Customise
     .build();
 ```
+The builder allows you to override the default `BackpressureStrategy` if desired (see above for a description of how backpressure works).
+
 ## Connecting
 Asynchronously connect to the broker using an RxJava `Completable`.
 
@@ -76,4 +94,14 @@ client.close().subscribe(() -> {
 }, e -> {
   // do something on error
 });
+```
+## Releases
+The binaries for each release should be available in Maven Central.
+
+```xml
+<dependency>
+    <groupId>net.eusashead.mqtt</groupId>
+    <artifactId>rxmqtt</artifactId>
+    <version>x.y.z.RELEASE</version>
+</dependency>
 ```
