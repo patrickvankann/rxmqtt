@@ -21,6 +21,7 @@ package net.eusashead.iot.mqtt.paho;
  */
 
 import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,10 +37,25 @@ import net.eusashead.iot.mqtt.paho.PahoObservableMqttClient.Builder;
 
 @RunWith(JUnit4.class)
 public class PahoObservableMqttClientTest {
-    
+
     @Test(expected = NullPointerException.class)
     public void whenANullPahoMqttClientIsPassedTheConstructorThrowsAnError() {
-        PahoObservableMqttClient.build(null).build();
+        PahoObservableMqttClient.builder((IMqttAsyncClient) null).build();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void whenANullPahoMqttBrokerUriIsPassedTheConstructorThrowsAnError() throws MqttException {
+        PahoObservableMqttClient.builder((String) null).build();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void whenANullPahoMqttBrokerUriAndClientIdIsPassedTheConstructorThrowsAnError() throws MqttException {
+        PahoObservableMqttClient.builder(null, null).build();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void whenANullPahoMqttBrokerUriAndClientIdAndMqttClientPersistenceIsPassedTheConstructorThrowsAnError() throws MqttException {
+        PahoObservableMqttClient.builder(null, null, null).build();
     }
 
     @Test
