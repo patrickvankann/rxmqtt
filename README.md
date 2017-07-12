@@ -9,7 +9,7 @@ In the 1.0.x branch, all of the `ObservableMqttClient` methods returned an [`Obs
 With the release of RxJava 2.0 there are new reactive types that can be used to better model these methods. In the 1.1.0 release, the `ObservableMqttClient` API has changed to make use of more appropriate reactive types from RxJava 2.
 
 1. Methods that previously returned `Observable<Void>` now return [`Completable`](http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/Completable.html). This new type is described in the [What's Different in 2.0](https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0#completable) document for RxJava. This is better from an idiomatic reactive programming perspective. In fact, this change is essential because RxJava 2 [no longer supports null](https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0#nulls). Methods affected are connect(), disconnect(), unsubscribe() and close(). If you were handling onNext() for some reason, move this code to onComplete().
-2. The publish() method that returned a 'one-shot' `Observable<PublishToken>` now uses [`Single<PublishToken>`]((http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/Single.html)). If you were handling both onComplete() and onNext(), merge this code together as a `Single<T>` does both at the same time.
+2. The publish() method that returned a 'one-shot' `Observable<PublishToken>` now uses [`Single<PublishToken>`](http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/Single.html). If you were handling both onComplete() and onNext(), merge this code together as a `Single<T>` does both at the same time.
 3. The subscribe() method now returns a [`Flowable<MqttMessage>`](http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/Flowable.html) rather than an `Observable<MqttMessage>`. `Flowable<T>` is a more suitable choice for supporting [backpressure](https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0#backpressure). You shouldn't need to change your code unless you want to support backpressure, in which case you should pass a [`FlowableSubscriber<MqttMessage>`](http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/FlowableSubscriber.html) to `Flowable.subscribe(FlowableSubscriber<MqttMessage>)` (see below for more on backpressure).
 
 ## Backpressure
@@ -96,7 +96,7 @@ client.close().subscribe(() -> {
 });
 ```
 ## Releases
-The binaries for each release should be available in Maven Central.
+The binaries for each release should be available in [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22rxmqtt%22).
 
 
     <dependency>
