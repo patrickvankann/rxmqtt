@@ -61,21 +61,21 @@ public class SubscribeFactory extends BaseMqttActionFactory {
         Objects.requireNonNull(qos);
         Objects.requireNonNull(backpressureStrategy);
         
-        return Flowable.create(observer -> {
+        return Flowable.create(emitter -> {
 
             // Message listeners
             final SubscriberMqttMessageListener[] listeners = new SubscriberMqttMessageListener[topics.length];
             for (int i = 0; i < topics.length; i++) {
-                listeners[i] = new SubscriberMqttMessageListener(observer);
+                listeners[i] = new SubscriberMqttMessageListener(emitter);
             }
 
             try {
-                client.subscribe(topics, qos, null, new SubscribeActionListener(observer), listeners);
+                client.subscribe(topics, qos, null, new SubscribeActionListener(emitter), listeners);
             } catch (MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
                 }
-                observer.onError(exception);
+                emitter.onError(exception);
             }
         }, backpressureStrategy);
     }
@@ -88,8 +88,8 @@ class SubscriberMqttMessageListener implements IMqttMessageListener {
 
     private final FlowableEmitter<? super MqttMessage> observer;
 
-    SubscriberMqttMessageListener(final FlowableEmitter<? super MqttMessage> observer) {
-        this.observer = Objects.requireNonNull(observer);
+    SubscriberMqttMessageListener(final FlowableEmitter<? super MqttMessage> emitter) {
+        this.observer = Objects.requireNonNull(emitter);
     }
 
     @Override

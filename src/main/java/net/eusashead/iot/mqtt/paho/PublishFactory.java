@@ -51,39 +51,39 @@ public class PublishFactory extends BaseMqttActionFactory {
             return new OnError() {
 
                 @Override
-                public void onError(Throwable t) {
+                public void onError(final Throwable t) {
                     emitter.onError(t);
                 }
             };
         }
 
         @Override
-        public void onSuccess(IMqttToken t) {
+        public void onSuccess(final IMqttToken mqttToken) {
 
-            PublishToken b = new PublishToken() {
+            final PublishToken publishToken = new PublishToken() {
 
                 @Override
                 public String getClientId() {
-                    return t.getClient().getClientId();
+                    return mqttToken.getClient().getClientId();
                 }
 
                 @Override
                 public String[] getTopics() {
-                    return t.getTopics();
+                    return mqttToken.getTopics();
                 }
 
                 @Override
                 public int getMessageId() {
-                    return t.getMessageId();
+                    return mqttToken.getMessageId();
                 }
 
                 @Override
                 public boolean getSessionPresent() {
-                    return t.getSessionPresent();
+                    return mqttToken.getSessionPresent();
                 }
 
             };
-            emitter.onSuccess(b);
+            emitter.onSuccess(publishToken);
         }
     }
 

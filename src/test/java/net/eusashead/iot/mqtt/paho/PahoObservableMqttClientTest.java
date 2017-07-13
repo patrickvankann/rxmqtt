@@ -40,25 +40,41 @@ import net.eusashead.iot.mqtt.paho.PahoObservableMqttClient.Builder;
 public class PahoObservableMqttClientTest {
 
     @Test(expected = NullPointerException.class)
-    public void whenANullPahoMqttClientIsPassedTheConstructorThrowsAnError() {
+    public void whenNullPahoMqttClientIsPassedTheConstructorThrowsAnError() {
         PahoObservableMqttClient.builder((IMqttAsyncClient) null).build();
     }
 
     @Test(expected = NullPointerException.class)
-    public void whenANullPahoMqttBrokerUriIsPassedTheConstructorThrowsAnError() throws MqttException {
+    public void whenNullPahoMqttBrokerUriIsPassedTheConstructorThrowsAnError() throws MqttException {
         PahoObservableMqttClient.builder((String) null).build();
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void whenANullPahoMqttBrokerUriAndClientIdIsPassedTheConstructorThrowsAnError() throws MqttException {
+    public void whenNullPahoMqttBrokerUriAndClientIdIsPassedTheConstructorThrowsAnError() throws MqttException {
         PahoObservableMqttClient.builder(null, null).build();
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void whenANullPahoMqttBrokerUriAndClientIdAndMqttClientPersistenceIsPassedTheConstructorThrowsAnError() throws MqttException {
+    public void whenNullPahoMqttBrokerUriAndClientIdAndMqttClientPersistenceIsPassedTheConstructorThrowsAnError() throws MqttException {
         PahoObservableMqttClient.builder(null, null, null).build();
     }
-
+    
+    @Test(expected = NullPointerException.class)
+    public void whenANullBackpressureStrategyThenTheMutatorThrowsAnError() throws MqttException {
+        PahoObservableMqttClient.builder(Mockito.mock(IMqttAsyncClient.class))
+        .setBackpressureStrategy(null);
+    }
+    
+    @Test
+    public void whenAValidBackpressureStrategyThenTheAccessorReturnsIt() throws MqttException {
+        BackpressureStrategy expected = BackpressureStrategy.BUFFER;
+        Builder builder = PahoObservableMqttClient.builder(Mockito.mock(IMqttAsyncClient.class))
+        .setBackpressureStrategy(expected);
+        Assert.assertNotNull(builder);
+        Assert.assertNotNull(builder.getBackpressureStrategy());
+        Assert.assertEquals(expected, builder.getBackpressureStrategy());
+    }
+    
     @Test
     public void whenGetClientIdIsCalledItReturnsPahoClientId() {
         final String expectedClientId = "clientId";
@@ -93,7 +109,6 @@ public class PahoObservableMqttClientTest {
     public void whenANullCloseFactoryIsProvidedAnErrorOccurs() {
         final Builder builder = builderWithMocks("clientId");
         builder.setCloseFactory(null);
-        builder.build();
     }
     
     @Test
@@ -111,7 +126,6 @@ public class PahoObservableMqttClientTest {
     public void whenANullConnectactoryIsProvidedAnErrorOccurs() {
         final Builder builder = builderWithMocks("clientId");
         builder.setConnectFactory(null);
-        builder.build();
     }
     
     @Test
@@ -130,7 +144,6 @@ public class PahoObservableMqttClientTest {
     public void whenANullDisconnectFactoryIsProvidedAnErrorOccurs() {
         final Builder builder = builderWithMocks("clientId");
         builder.setConnectFactory(null);
-        builder.build();
     }
     
     @Test
@@ -149,7 +162,6 @@ public class PahoObservableMqttClientTest {
     public void whenANullPublishFactoryIsProvidedAnErrorOccurs() {
         final Builder builder = builderWithMocks("clientId");
         builder.setPublishFactory(null);
-        builder.build();
     }
     
     @Test
@@ -170,7 +182,6 @@ public class PahoObservableMqttClientTest {
     public void whenANullSubscribeFactoryIsProvidedAnErrorOccurs() {
         final Builder builder = builderWithMocks("clientId");
         builder.setSubscribeFactory(null);
-        builder.build();
     }
     
     @Test
@@ -191,7 +202,6 @@ public class PahoObservableMqttClientTest {
     public void whenANullUnsubscribeFactoryIsProvidedAnErrorOccurs() {
         final Builder builder = builderWithMocks("clientId");
         builder.setUnsubscribeFactory(null);
-        builder.build();
     }
     
     @Test

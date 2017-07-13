@@ -41,7 +41,7 @@ public class DisconnectFactory extends BaseMqttActionFactory {
         }
 
         @Override
-        public void onSuccess(IMqttToken asyncActionToken) {
+        public void onSuccess(final IMqttToken asyncActionToken) {
             emitter.onComplete();
         }
     }

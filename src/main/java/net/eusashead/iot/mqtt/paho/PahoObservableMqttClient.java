@@ -80,7 +80,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
         public IMqttAsyncClient getClient() {
             return client;
         }
-
+        
         public MqttConnectOptions getConnectOptions() {
             return connectOptions;
         }
@@ -107,6 +107,10 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
 
         public UnsubscribeFactory getUnsubscribeFactory() {
             return unsubscribeFactory;
+        }
+        
+        public BackpressureStrategy getBackpressureStrategy() {
+            return this.backpressureStrategy;
         }
 
         public Builder setMqttCallback(final MqttCallback mqttCallback) {
