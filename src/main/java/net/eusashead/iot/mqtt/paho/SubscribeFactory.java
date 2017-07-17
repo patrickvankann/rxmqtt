@@ -43,24 +43,24 @@ public class SubscribeFactory extends BaseMqttActionFactory {
         }
 
         @Override
-        public void onSuccess(IMqttToken asyncActionToken) {
+        public void onSuccess(final IMqttToken asyncActionToken) {
             // Does nothing
         }
     }
 
     private final static Logger LOGGER = Logger.getLogger(SubscribeActionListener.class.getName());
-    
+
     public SubscribeFactory(final IMqttAsyncClient client) {
         super(client);
     }
 
-    public Flowable<MqttMessage> create(final String[] topics, 
-            final int[] qos, final BackpressureStrategy backpressureStrategy) {
-        
+    public Flowable<MqttMessage> create(final String[] topics, final int[] qos,
+            final BackpressureStrategy backpressureStrategy) {
+
         Objects.requireNonNull(topics);
         Objects.requireNonNull(qos);
         Objects.requireNonNull(backpressureStrategy);
-        
+
         return Flowable.create(emitter -> {
 
             // Message listeners
@@ -70,8 +70,8 @@ public class SubscribeFactory extends BaseMqttActionFactory {
             }
 
             try {
-                client.subscribe(topics, qos, null, new SubscribeActionListener(emitter), listeners);
-            } catch (MqttException exception) {
+                this.client.subscribe(topics, qos, null, new SubscribeActionListener(emitter), listeners);
+            } catch (final MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
                 }
@@ -95,7 +95,7 @@ class SubscriberMqttMessageListener implements IMqttMessageListener {
     @Override
     public void messageArrived(final String topic, final org.eclipse.paho.client.mqttv3.MqttMessage message) {
         LOGGER.log(Level.FINE, String.format("Message %s received on topic %s", message.getId(), topic));
-        observer.onNext(
+        this.observer.onNext(
                 MqttMessage.create(message.getId(), message.getPayload(), message.getQos(), message.isRetained()));
     }
 }

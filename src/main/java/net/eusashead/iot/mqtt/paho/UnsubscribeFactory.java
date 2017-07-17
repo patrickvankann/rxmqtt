@@ -41,8 +41,8 @@ public class UnsubscribeFactory extends BaseMqttActionFactory {
         }
 
         @Override
-        public void onSuccess(IMqttToken asyncActionToken) {
-            emitter.onComplete();
+        public void onSuccess(final IMqttToken asyncActionToken) {
+            this.emitter.onComplete();
         }
     }
 
@@ -54,8 +54,8 @@ public class UnsubscribeFactory extends BaseMqttActionFactory {
 
         return Completable.create(emitter -> {
             try {
-                client.unsubscribe(topics, null, new UnsubscribeActionListener(emitter));
-            } catch (MqttException exception) {
+                this.client.unsubscribe(topics, null, new UnsubscribeActionListener(emitter));
+            } catch (final MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
                 }

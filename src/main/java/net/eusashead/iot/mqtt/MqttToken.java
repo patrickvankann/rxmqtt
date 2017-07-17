@@ -34,14 +34,14 @@ public interface MqttToken {
 
     /**
      * Returns the identifier for the message associated with this token
-     * 
+     *
      * @return {@link String} message identifier
      */
     public int getMessageId();
 
     /**
      * Whether a session is present for this topic
-     * 
+     *
      * @return <code>true</code> if session present or <code>false</code>
      *         otherwise
      */

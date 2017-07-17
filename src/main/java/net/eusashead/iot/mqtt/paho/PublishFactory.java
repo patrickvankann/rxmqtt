@@ -52,7 +52,7 @@ public class PublishFactory extends BaseMqttActionFactory {
 
                 @Override
                 public void onError(final Throwable t) {
-                    emitter.onError(t);
+                    PublishActionListener.this.emitter.onError(t);
                 }
             };
         }
@@ -83,7 +83,7 @@ public class PublishFactory extends BaseMqttActionFactory {
                 }
 
             };
-            emitter.onSuccess(publishToken);
+            this.emitter.onSuccess(publishToken);
         }
     }
 
@@ -94,9 +94,9 @@ public class PublishFactory extends BaseMqttActionFactory {
     public Single<PublishToken> create(final String topic, final MqttMessage msg) {
         return Single.create(emitter -> {
             try {
-                client.publish(topic, msg.getPayload(), msg.getQos(), msg.isRetained(), null,
+                this.client.publish(topic, msg.getPayload(), msg.getQos(), msg.isRetained(), null,
                         new PublishActionListener(emitter));
-            } catch (MqttException exception) {
+            } catch (final MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
                 }

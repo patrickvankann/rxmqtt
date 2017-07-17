@@ -35,13 +35,13 @@ public abstract class BaseEmitterMqttActionListener implements IMqttActionListen
         if (LOGGER.isLoggable(Level.SEVERE)) {
             LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
         }
-        getOnError().onError(exception);
+        this.getOnError().onError(exception);
     }
 
     /**
      * Return the {@link OnError} implementation for this listener so that the
      * onFailure() method can call onError()
-     * 
+     *
      * @return {@link OnError} implementation.
      */
     public abstract OnError getOnError();

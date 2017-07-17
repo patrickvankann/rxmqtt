@@ -38,7 +38,7 @@ public abstract class FlowableEmitterMqttActionListener<T> extends BaseEmitterMq
 
             @Override
             public void onError(final Throwable t) {
-                emitter.onError(t);
+                FlowableEmitterMqttActionListener.this.emitter.onError(t);
             }
         };
     }

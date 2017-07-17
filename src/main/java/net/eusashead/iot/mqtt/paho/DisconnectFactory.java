@@ -42,7 +42,7 @@ public class DisconnectFactory extends BaseMqttActionFactory {
 
         @Override
         public void onSuccess(final IMqttToken asyncActionToken) {
-            emitter.onComplete();
+            this.emitter.onComplete();
         }
     }
 
@@ -54,8 +54,8 @@ public class DisconnectFactory extends BaseMqttActionFactory {
         return Completable.create(emitter -> {
 
             try {
-                client.disconnect(null, new DisconnectActionListener(emitter));
-            } catch (MqttException exception) {
+                this.client.disconnect(null, new DisconnectActionListener(emitter));
+            } catch (final MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
                 }

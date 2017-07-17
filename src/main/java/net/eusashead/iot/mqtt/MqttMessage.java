@@ -55,29 +55,30 @@ class BasicMqttMessage implements MqttMessage {
 
     @Override
     public int getId() {
-        return id;
+        return this.id;
     }
 
     @Override
     public byte[] getPayload() {
-        return payload;
+        return this.payload;
     }
 
     @Override
     public int getQos() {
-        return qos;
+        return this.qos;
     }
 
     @Override
     public boolean isRetained() {
-        return retained;
+        return this.retained;
     }
 
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder(50);
-        builder.append("BasicMqttMessage [id=").append(id).append(", payload=").append(Arrays.toString(payload))
-                .append(", qos=").append(qos).append(", retained=").append(retained).append("]");
+        builder.append("BasicMqttMessage [id=").append(this.id).append(", payload=")
+                .append(Arrays.toString(this.payload)).append(", qos=").append(this.qos).append(", retained=")
+                .append(this.retained).append("]");
         return builder.toString();
     }
 
@@ -85,15 +86,15 @@ class BasicMqttMessage implements MqttMessage {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + id;
-        result = prime * result + Arrays.hashCode(payload);
-        result = prime * result + qos;
-        result = prime * result + (retained ? 1231 : 1237);
+        result = prime * result + this.id;
+        result = prime * result + Arrays.hashCode(this.payload);
+        result = prime * result + this.qos;
+        result = prime * result + (this.retained ? 1231 : 1237);
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -103,17 +104,17 @@ class BasicMqttMessage implements MqttMessage {
         if (!(obj instanceof BasicMqttMessage)) {
             return false;
         }
-        BasicMqttMessage other = (BasicMqttMessage) obj;
-        if (id != other.id) {
+        final BasicMqttMessage other = (BasicMqttMessage) obj;
+        if (this.id != other.id) {
             return false;
         }
-        if (!Arrays.equals(payload, other.payload)) {
+        if (!Arrays.equals(this.payload, other.payload)) {
             return false;
         }
-        if (qos != other.qos) {
+        if (this.qos != other.qos) {
             return false;
         }
-        if (retained != other.retained) {
+        if (this.retained != other.retained) {
             return false;
         }
         return true;

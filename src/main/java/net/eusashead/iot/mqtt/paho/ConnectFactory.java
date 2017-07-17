@@ -42,7 +42,7 @@ public class ConnectFactory extends BaseMqttActionFactory {
 
         @Override
         public void onSuccess(final IMqttToken asyncActionToken) {
-            emitter.onComplete();
+            this.emitter.onComplete();
         }
     }
 
@@ -58,8 +58,8 @@ public class ConnectFactory extends BaseMqttActionFactory {
     public Completable create() {
         return Completable.create(emitter -> {
             try {
-                client.connect(options, null, new ConnectActionListener(emitter));
-            } catch (MqttException exception) {
+                this.client.connect(this.options, null, new ConnectActionListener(emitter));
+            } catch (final MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
                 }
@@ -69,6 +69,6 @@ public class ConnectFactory extends BaseMqttActionFactory {
     }
 
     public MqttConnectOptions getOptions() {
-        return options;
+        return this.options;
     }
 }

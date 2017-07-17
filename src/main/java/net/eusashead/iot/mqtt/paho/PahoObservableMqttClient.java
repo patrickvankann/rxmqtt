@@ -61,7 +61,8 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
             this(brokerUri, clientId, new MemoryPersistence());
         }
 
-        public Builder(final String brokerUri, final String clientId, final MqttClientPersistence persistence) throws MqttException {
+        public Builder(final String brokerUri, final String clientId, final MqttClientPersistence persistence)
+                throws MqttException {
             this(new MqttAsyncClient(brokerUri, clientId, persistence));
         }
 
@@ -78,37 +79,37 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
         }
 
         public IMqttAsyncClient getClient() {
-            return client;
+            return this.client;
         }
-        
+
         public MqttConnectOptions getConnectOptions() {
-            return connectOptions;
+            return this.connectOptions;
         }
 
         public CloseFactory getCloseFactory() {
-            return closeFactory;
+            return this.closeFactory;
         }
 
         public ConnectFactory getConnectFactory() {
-            return connectFactory;
+            return this.connectFactory;
         }
 
         public DisconnectFactory getDisconnectFactory() {
-            return disconnectFactory;
+            return this.disconnectFactory;
         }
 
         public PublishFactory getPublishFactory() {
-            return publishFactory;
+            return this.publishFactory;
         }
 
         public SubscribeFactory getSubscribeFactory() {
-            return subscribeFactory;
+            return this.subscribeFactory;
         }
 
         public UnsubscribeFactory getUnsubscribeFactory() {
-            return unsubscribeFactory;
+            return this.unsubscribeFactory;
         }
-        
+
         public BackpressureStrategy getBackpressureStrategy() {
             return this.backpressureStrategy;
         }
@@ -158,7 +159,8 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
             this.backpressureStrategy = Objects.requireNonNull(backpressureStrategy);
             return this;
         }
-        
+
+        @Override
         public PahoObservableMqttClient build() {
             return new PahoObservableMqttClient(this);
         }
@@ -187,7 +189,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.eusashead.iot.mqtt.ObservableMqttClient#getClientId()
      */
     @Override
@@ -197,7 +199,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.eusashead.iot.mqtt.ObservableMqttClient#getBrokerUri()
      */
     @Override
@@ -207,7 +209,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.eusashead.iot.mqtt.ObservableMqttClient#isConnected()
      */
     @Override
@@ -217,7 +219,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.eusashead.iot.mqtt.ObservableMqttClient#close()
      */
     @Override
@@ -227,7 +229,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.eusashead.iot.mqtt.ObservableMqttClient#connect()
      */
     @Override
@@ -237,7 +239,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.eusashead.iot.mqtt.ObservableMqttClient#disconnect()
      */
     @Override
@@ -247,7 +249,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * net.eusashead.iot.mqtt.ObservableMqttClient#publish(java.lang.String,
      * net.eusashead.iot.mqtt.MqttMessage)
@@ -260,19 +262,19 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * net.eusashead.iot.mqtt.ObservableMqttClient#subscribe(java.lang.String[],
      * int[])
      */
     @Override
     public Flowable<MqttMessage> subscribe(final String topics[], final int qos[]) {
-        return this.subscribeFactory.create(topics, qos, backpressureStrategy);
+        return this.subscribeFactory.create(topics, qos, this.backpressureStrategy);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * net.eusashead.iot.mqtt.ObservableMqttClient#subscribe(java.lang.String,
      * int)
@@ -286,7 +288,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * net.eusashead.iot.mqtt.ObservableMqttClient#unsubscribe(java.lang.String[
      * ])
@@ -298,7 +300,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * net.eusashead.iot.mqtt.ObservableMqttClient#unsubscribe(java.lang.String)
      */
@@ -316,7 +318,8 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
         return builder(brokerUri, clientId, new MemoryPersistence());
     }
 
-    public static Builder builder(final String brokerUri, final String clientId, final MqttClientPersistence persistence) throws MqttException {
+    public static Builder builder(final String brokerUri, final String clientId,
+            final MqttClientPersistence persistence) throws MqttException {
         return builder(new MqttAsyncClient(brokerUri, clientId, persistence));
     }
 

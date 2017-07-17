@@ -38,7 +38,7 @@ public class CloseFactory extends BaseMqttActionFactory {
 
             @Override
             public void run() throws MqttException {
-                client.close();
+                CloseFactory.this.client.close();
             }
         });
     }

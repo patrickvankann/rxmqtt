@@ -38,7 +38,7 @@ public abstract class CompletableEmitterMqttActionListener extends BaseEmitterMq
 
             @Override
             public void onError(final Throwable t) {
-                emitter.onError(t);
+                CompletableEmitterMqttActionListener.this.emitter.onError(t);
             }
         };
     }

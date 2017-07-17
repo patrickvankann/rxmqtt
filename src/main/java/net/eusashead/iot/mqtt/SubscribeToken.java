@@ -25,12 +25,12 @@ import io.reactivex.Flowable;
 /**
  * This interface isn't exposed by the API currently and may be removed in a
  * future release.
- * 
+ *
  * Currently, if a subscription succeeds a {@link Flowable} is returned that
  * allows a subscriber to receive {@link MqttMessage}.
- * 
+ *
  * There is no separate acknowledgement that the subscription succeeded.
- * 
+ *
  * @author patvanka
  *
  */
@@ -39,7 +39,7 @@ public interface SubscribeToken extends MqttToken {
 
     /**
      * Returns the granted QoS when a subscription is acknowledged
-     * 
+     *
      * @return array of integers representing the QoS levels
      */
     public int[] getGrantedQos();
