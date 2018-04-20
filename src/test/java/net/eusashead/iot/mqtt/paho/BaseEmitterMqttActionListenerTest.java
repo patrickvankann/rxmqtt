@@ -37,46 +37,51 @@ import io.reactivex.CompletableEmitter;
 
 @RunWith(JUnit4.class)
 public class BaseEmitterMqttActionListenerTest {
-    
+
     @Test
-    public void whenOnFailureIsCalledTheObserverIsNotifiedAndTheErrorIsLogged() throws Exception {
+    public void whenOnFailureIsCalledTheObserverIsNotifiedAndTheErrorIsLogged()
+            throws Exception {
         // Given
         final Handler handler = Mockito.mock(Handler.class);
-        final ArgumentCaptor<LogRecord> logRecord = ArgumentCaptor.forClass(LogRecord.class);
-        Logger.getLogger(BaseEmitterMqttActionListener.class.getName()).addHandler(handler);
-        final CompletableEmitter observer = Mockito.mock(CompletableEmitter.class);
+        final ArgumentCaptor<LogRecord> logRecord = ArgumentCaptor
+                .forClass(LogRecord.class);
+        Logger.getLogger(BaseEmitterMqttActionListener.class.getName())
+                .addHandler(handler);
+        final CompletableEmitter observer = Mockito
+                .mock(CompletableEmitter.class);
         final BaseEmitterMqttActionListener listener = new BaseEmitterMqttActionListener() {
-            
+
             @Override
             public OnError getOnError() {
                 return new OnError() {
-                    
+
                     @Override
-                    public void onError(Throwable exception) {
+                    public void onError(final Throwable exception) {
                         observer.onError(exception);
                     }
                 };
             }
-            
+
             @Override
-            public void onSuccess(IMqttToken arg0) {
+            public void onSuccess(final IMqttToken arg0) {
                 // Not invoked
             }
         };
-        
+
         final IMqttToken asyncActionToken = Mockito.mock(IMqttToken.class);
         final Throwable exception = Mockito.mock(Throwable.class);
-        String expectedErrorMessage = "Error message";
+        final String expectedErrorMessage = "Error message";
         Mockito.when(exception.getMessage()).thenReturn(expectedErrorMessage);
-        
+
         // When
         listener.onFailure(asyncActionToken, exception);
-        
+
         // Then
         Mockito.verify(observer).onError(exception);
         Mockito.verify(handler).publish(logRecord.capture());
         Assert.assertEquals(Level.SEVERE, logRecord.getValue().getLevel());
-        Assert.assertEquals(expectedErrorMessage, logRecord.getValue().getMessage());
+        Assert.assertEquals(expectedErrorMessage,
+                logRecord.getValue().getMessage());
         Assert.assertEquals(exception, logRecord.getValue().getThrown());
     }
 

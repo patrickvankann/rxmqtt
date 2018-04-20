@@ -34,35 +34,42 @@ import net.eusashead.iot.mqtt.SubscribeMessage;
 
 @RunWith(JUnit4.class)
 public class SubscriberMqttMessageListenerTest {
-    
+
     @Test
     public void whenAValidObserverIsPassedToTheConstructorThenItIsConstructedWithoutError() {
         @SuppressWarnings("unchecked")
-        final FlowableEmitter<MqttMessage> observer = Mockito.mock(FlowableEmitter.class);
+        final FlowableEmitter<MqttMessage> observer = Mockito
+                .mock(FlowableEmitter.class);
         new SubscriberMqttMessageListener(observer);
     }
-    
-    @Test(expected=NullPointerException.class)
+
+    @Test(expected = NullPointerException.class)
     public void whenANulldObserverIsPassedToTheConstructorThenItThrowsAnError() {
         final FlowableEmitter<MqttMessage> observer = null;
         new SubscriberMqttMessageListener(observer);
     }
-    
+
     @Test
-    public void whenAMessageArrivesThenTheObserverIsNotified() throws Exception {
+    public void whenAMessageArrivesThenTheObserverIsNotified()
+            throws Exception {
         @SuppressWarnings("unchecked")
-        final FlowableEmitter<MqttMessage> observer = Mockito.mock(FlowableEmitter.class);
-        final IMqttMessageListener listener = new SubscriberMqttMessageListener(observer);
+        final FlowableEmitter<MqttMessage> observer = Mockito
+                .mock(FlowableEmitter.class);
+        final IMqttMessageListener listener = new SubscriberMqttMessageListener(
+                observer);
         final String expectedTopic = "expected";
-        final byte[] expectedPayload = new byte[]{ 'a', 'b', 'c' };
-        final org.eclipse.paho.client.mqttv3.MqttMessage expectedMessage = new org.eclipse.paho.client.mqttv3.MqttMessage(expectedPayload);
+        final byte[] expectedPayload = new byte[] { 'a', 'b', 'c' };
+        final org.eclipse.paho.client.mqttv3.MqttMessage expectedMessage = new org.eclipse.paho.client.mqttv3.MqttMessage(
+                expectedPayload);
         expectedMessage.setQos(2);
         expectedMessage.setId(1);
         expectedMessage.setRetained(true);
-        final ArgumentCaptor<SubscribeMessage> actualMessage = ArgumentCaptor.forClass(SubscribeMessage.class);
+        final ArgumentCaptor<SubscribeMessage> actualMessage = ArgumentCaptor
+                .forClass(SubscribeMessage.class);
         listener.messageArrived(expectedTopic, expectedMessage);
         Mockito.verify(observer).onNext(actualMessage.capture());
-        Assert.assertArrayEquals(expectedPayload, actualMessage.getValue().getPayload());
+        Assert.assertArrayEquals(expectedPayload,
+                actualMessage.getValue().getPayload());
         Assert.assertEquals(2, actualMessage.getValue().getQos());
         Assert.assertEquals(1, actualMessage.getValue().getId());
         Assert.assertTrue(actualMessage.getValue().isRetained());

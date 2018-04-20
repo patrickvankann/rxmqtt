@@ -35,18 +35,20 @@ import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 public class AsyncPahoUtils {
 
     public static void connect(final IMqttAsyncClient client) throws Throwable {
-        CountDownLatch latch = new CountDownLatch(1);
-        AtomicReference<Throwable> error = new AtomicReference<>();
-        AtomicReference<Boolean> success = new AtomicReference<>(Boolean.TRUE);
+        final CountDownLatch latch = new CountDownLatch(1);
+        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final AtomicReference<Boolean> success = new AtomicReference<>(
+                Boolean.TRUE);
         client.connect(null, new IMqttActionListener() {
 
             @Override
-            public void onSuccess(IMqttToken asyncActionToken) {
+            public void onSuccess(final IMqttToken asyncActionToken) {
                 latch.countDown();
             }
 
             @Override
-            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+            public void onFailure(final IMqttToken asyncActionToken,
+                    final Throwable exception) {
                 error.set(exception);
                 success.set(Boolean.FALSE);
                 latch.countDown();
@@ -58,51 +60,61 @@ public class AsyncPahoUtils {
         }
     }
 
-    public static void disconnect(final IMqttAsyncClient client) throws MqttException, MqttSecurityException, InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
+    public static void disconnect(final IMqttAsyncClient client)
+            throws MqttException, MqttSecurityException, InterruptedException {
+        final CountDownLatch latch = new CountDownLatch(1);
         client.disconnect(null, new IMqttActionListener() {
 
             @Override
-            public void onSuccess(IMqttToken asyncActionToken) {
+            public void onSuccess(final IMqttToken asyncActionToken) {
                 latch.countDown();
             }
 
             @Override
-            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                latch.countDown();
-            }
-        });
-        latch.await();
-    }
-
-    public static void publish(final IMqttAsyncClient client, final String topic, final byte[] expectedPayload) throws MqttException, MqttPersistenceException, InterruptedException {
-        final CountDownLatch latch = new CountDownLatch(1);
-        client.publish(topic, new MqttMessage(expectedPayload), null, new IMqttActionListener() {
-
-            @Override
-            public void onSuccess(IMqttToken asyncActionToken) {
-                latch.countDown();
-            }
-
-            @Override
-            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+            public void onFailure(final IMqttToken asyncActionToken,
+                    final Throwable exception) {
                 latch.countDown();
             }
         });
         latch.await();
     }
 
-    public static void subscribe(final IMqttAsyncClient client, final String topic, final IMqttMessageListener messageListener) throws MqttException, InterruptedException {
+    public static void publish(final IMqttAsyncClient client,
+            final String topic, final byte[] expectedPayload)
+            throws MqttException, MqttPersistenceException,
+            InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
-        IMqttActionListener callback = new IMqttActionListener() {
+        client.publish(topic, new MqttMessage(expectedPayload), null,
+                new IMqttActionListener() {
+
+                    @Override
+                    public void onSuccess(final IMqttToken asyncActionToken) {
+                        latch.countDown();
+                    }
+
+                    @Override
+                    public void onFailure(final IMqttToken asyncActionToken,
+                            final Throwable exception) {
+                        latch.countDown();
+                    }
+                });
+        latch.await();
+    }
+
+    public static void subscribe(final IMqttAsyncClient client,
+            final String topic, final IMqttMessageListener messageListener)
+            throws MqttException, InterruptedException {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final IMqttActionListener callback = new IMqttActionListener() {
 
             @Override
-            public void onSuccess(IMqttToken asyncActionToken) {
+            public void onSuccess(final IMqttToken asyncActionToken) {
                 latch.countDown();
             }
 
             @Override
-            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+            public void onFailure(final IMqttToken asyncActionToken,
+                    final Throwable exception) {
                 latch.countDown();
             }
         };

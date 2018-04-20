@@ -30,39 +30,41 @@ import io.reactivex.CompletableEmitter;
 
 @RunWith(JUnit4.class)
 public class CompletableEmitterMqttActionListenerTest {
-    
-    @Test(expected=NullPointerException.class)
+
+    @Test(expected = NullPointerException.class)
     public void whenTheConstructorIsCalledWithANullEmitterANullPointerExceptionOccurs() {
         new CompletableEmitterMqttActionListener(null) {
 
             @Override
-            public void onSuccess(IMqttToken asyncActionToken) {
+            public void onSuccess(final IMqttToken asyncActionToken) {
                 // Not invoked
             }
 
         };
     }
-    
+
     @Test
     public void whenTheConstructorIsCalledWithAValidEmitterThenGetOnErrorReturnsTheEmitter() {
-        
-        //Given
-        CompletableEmitter emitter = Mockito.mock(CompletableEmitter.class);
-        Throwable ex = Mockito.mock(Throwable.class);
-        CompletableEmitterMqttActionListener listener = new CompletableEmitterMqttActionListener(emitter) {
+
+        // Given
+        final CompletableEmitter emitter = Mockito
+                .mock(CompletableEmitter.class);
+        final Throwable ex = Mockito.mock(Throwable.class);
+        final CompletableEmitterMqttActionListener listener = new CompletableEmitterMqttActionListener(
+                emitter) {
 
             @Override
-            public void onSuccess(IMqttToken asyncActionToken) {
+            public void onSuccess(final IMqttToken asyncActionToken) {
                 // Not invoked
             }
         };
-        
+
         // When
-        OnError onError = listener.getOnError();
+        final OnError onError = listener.getOnError();
         onError.onError(ex);
-        
+
         // Then
         Mockito.verify(emitter).onError(ex);
     }
-    
+
 }

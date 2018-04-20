@@ -45,20 +45,23 @@ public class AsyncPubSubITCase {
 
     @Test
     public void itCanPubAndSubToWebsocketBroker() throws Throwable {
-        itCanPubAndSubToBroker(WS_BROKER_URL);
+        this.itCanPubAndSubToBroker(WS_BROKER_URL);
     }
 
     @Test
     public void itCanPubAndSubToTcpBroker() throws Throwable {
-        itCanPubAndSubToBroker(TCP_BROKER_URL);
+        this.itCanPubAndSubToBroker(TCP_BROKER_URL);
     }
 
-    private void itCanPubAndSubToBroker(final String brokerUrl) throws Throwable {
+    private void itCanPubAndSubToBroker(final String brokerUrl)
+            throws Throwable {
 
         // Create async MQTT clients
-        final MqttAsyncClient pubClient = new MqttAsyncClient(brokerUrl, CLIENT_ID + "-pub");
+        final MqttAsyncClient pubClient = new MqttAsyncClient(brokerUrl,
+                CLIENT_ID + "-pub");
         AsyncPahoUtils.connect(pubClient);
-        final MqttAsyncClient subClient = new MqttAsyncClient(brokerUrl, CLIENT_ID + "-sub");
+        final MqttAsyncClient subClient = new MqttAsyncClient(brokerUrl,
+                CLIENT_ID + "-sub");
         AsyncPahoUtils.connect(subClient);
 
         final CountDownLatch latch = new CountDownLatch(1);
@@ -68,7 +71,8 @@ public class AsyncPubSubITCase {
         final IMqttMessageListener messageListener = new IMqttMessageListener() {
 
             @Override
-            public void messageArrived(String topic, MqttMessage message) throws Exception {
+            public void messageArrived(final String topic,
+                    final MqttMessage message) throws Exception {
                 msg.set(message);
                 latch.countDown();
             }

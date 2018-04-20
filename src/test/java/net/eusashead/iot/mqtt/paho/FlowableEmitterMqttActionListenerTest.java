@@ -30,40 +30,42 @@ import io.reactivex.FlowableEmitter;
 
 @RunWith(JUnit4.class)
 public class FlowableEmitterMqttActionListenerTest {
-    
-    @Test(expected=NullPointerException.class)
+
+    @Test(expected = NullPointerException.class)
     public void whenTheConstructorIsCalledWithANullEmitterANullPointerExceptionOccurs() {
         new FlowableEmitterMqttActionListener<Object>(null) {
 
             @Override
-            public void onSuccess(IMqttToken asyncActionToken) {
+            public void onSuccess(final IMqttToken asyncActionToken) {
                 // Not invoked
             }
 
         };
     }
-    
+
     @Test
     public void whenTheConstructorIsCalledWithAValidEmitterThenGetOnErrorReturnsTheEmitter() {
-        
-        //Given
+
+        // Given
         @SuppressWarnings("unchecked")
-        FlowableEmitter<Object> emitter = Mockito.mock(FlowableEmitter.class);
-        Throwable ex = Mockito.mock(Throwable.class);
-        FlowableEmitterMqttActionListener<Object> listener = new FlowableEmitterMqttActionListener<Object>(emitter) {
+        final FlowableEmitter<Object> emitter = Mockito
+                .mock(FlowableEmitter.class);
+        final Throwable ex = Mockito.mock(Throwable.class);
+        final FlowableEmitterMqttActionListener<Object> listener = new FlowableEmitterMqttActionListener<Object>(
+                emitter) {
 
             @Override
-            public void onSuccess(IMqttToken asyncActionToken) {
+            public void onSuccess(final IMqttToken asyncActionToken) {
                 // Not invoked
             }
         };
-        
+
         // When
-        OnError onError = listener.getOnError();
+        final OnError onError = listener.getOnError();
         onError.onError(ex);
-        
+
         // Then
         Mockito.verify(emitter).onError(ex);
     }
-    
+
 }

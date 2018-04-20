@@ -34,7 +34,6 @@ import org.mockito.Mockito;
 
 import io.reactivex.Completable;
 
-
 @RunWith(JUnit4.class)
 public class CloseFactoryTest {
 
@@ -42,7 +41,8 @@ public class CloseFactoryTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void whenCreateIsCalledThenAnObservableIsReturned() throws Exception {
+    public void whenCreateIsCalledThenAnObservableIsReturned()
+            throws Exception {
         // Given
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
         final CloseFactory factory = new CloseFactory(client);
@@ -57,10 +57,13 @@ public class CloseFactoryTest {
     }
 
     @Test
-    public void whenCreateIsCalledAndAnErrorOccursThenObserverOnErrorIsCalled() throws Throwable {
-        expectedException.expectCause(isA(MqttException.class));
+    public void whenCreateIsCalledAndAnErrorOccursThenObserverOnErrorIsCalled()
+            throws Throwable {
+        this.expectedException.expectCause(isA(MqttException.class));
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
-        Mockito.doThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED)).when(client).close();
+        Mockito.doThrow(
+                new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED))
+                .when(client).close();
         final CloseFactory factory = new CloseFactory(client);
         final Completable obs = factory.create();
         obs.blockingAwait();
