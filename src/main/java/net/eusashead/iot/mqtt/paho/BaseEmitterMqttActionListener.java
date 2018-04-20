@@ -26,12 +26,15 @@ import java.util.logging.Logger;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 
-public abstract class BaseEmitterMqttActionListener implements IMqttActionListener {
+public abstract class BaseEmitterMqttActionListener
+        implements IMqttActionListener {
 
-    protected final static Logger LOGGER = Logger.getLogger(BaseEmitterMqttActionListener.class.getName());
+    protected final static Logger LOGGER = Logger
+            .getLogger(BaseEmitterMqttActionListener.class.getName());
 
     @Override
-    public void onFailure(final IMqttToken asyncActionToken, final Throwable exception) {
+    public void onFailure(final IMqttToken asyncActionToken,
+            final Throwable exception) {
         if (LOGGER.isLoggable(Level.SEVERE)) {
             LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
         }

@@ -77,8 +77,8 @@ public interface ObservableMqttClient {
     Completable disconnect();
 
     /**
-     * Publish an {@link PublishMessage} to a {@link String} topic at the given QOS
-     * level
+     * Publish an {@link PublishMessage} to a {@link String} topic at the given
+     * QOS level
      *
      * @return {@link Single} that will complete on successful publication with
      *         a {@link PublishToken}
@@ -89,7 +89,8 @@ public interface ObservableMqttClient {
      * Subscribe to multiple {@link String} topics to receive multiple
      * {@link SubscribeMessage} at the given QOS levels
      *
-     * @return {@link Flowable} that will receive multiple {@link SubscribeMessage}
+     * @return {@link Flowable} that will receive multiple
+     *         {@link SubscribeMessage}
      */
     Flowable<SubscribeMessage> subscribe(String[] topics, int[] qos);
 
@@ -97,7 +98,8 @@ public interface ObservableMqttClient {
      * Subscribe to a {@link String} topic to receive multiple
      * {@link SubscribeMessage} at the supplied QOS level
      *
-     * @return {@link Flowable} that will receive multiple {@link SubscribeMessage}
+     * @return {@link Flowable} that will receive multiple
+     *         {@link SubscribeMessage}
      */
     Flowable<SubscribeMessage> subscribe(String topic, int qos);
 

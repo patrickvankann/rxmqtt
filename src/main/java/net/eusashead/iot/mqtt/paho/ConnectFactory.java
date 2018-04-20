@@ -34,7 +34,8 @@ import io.reactivex.CompletableEmitter;
 
 public class ConnectFactory extends BaseMqttActionFactory {
 
-    static final class ConnectActionListener extends CompletableEmitterMqttActionListener {
+    static final class ConnectActionListener
+            extends CompletableEmitterMqttActionListener {
 
         public ConnectActionListener(final CompletableEmitter emitter) {
             super(emitter);
@@ -48,9 +49,11 @@ public class ConnectFactory extends BaseMqttActionFactory {
 
     private final MqttConnectOptions options;
 
-    private final static Logger LOGGER = Logger.getLogger(ConnectFactory.class.getName());
+    private final static Logger LOGGER = Logger
+            .getLogger(ConnectFactory.class.getName());
 
-    public ConnectFactory(final IMqttAsyncClient client, final MqttConnectOptions options) {
+    public ConnectFactory(final IMqttAsyncClient client,
+            final MqttConnectOptions options) {
         super(client);
         this.options = Objects.requireNonNull(options);
     }
@@ -58,7 +61,8 @@ public class ConnectFactory extends BaseMqttActionFactory {
     public Completable create() {
         return Completable.create(emitter -> {
             try {
-                this.client.connect(this.options, null, new ConnectActionListener(emitter));
+                this.client.connect(this.options, null,
+                        new ConnectActionListener(emitter));
             } catch (final MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);

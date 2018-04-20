@@ -32,9 +32,11 @@ import io.reactivex.CompletableEmitter;
 
 public class UnsubscribeFactory extends BaseMqttActionFactory {
 
-    private final static Logger LOGGER = Logger.getLogger(UnsubscribeFactory.class.getName());
+    private final static Logger LOGGER = Logger
+            .getLogger(UnsubscribeFactory.class.getName());
 
-    static final class UnsubscribeActionListener extends CompletableEmitterMqttActionListener {
+    static final class UnsubscribeActionListener
+            extends CompletableEmitterMqttActionListener {
 
         public UnsubscribeActionListener(final CompletableEmitter emitter) {
             super(emitter);
@@ -54,7 +56,8 @@ public class UnsubscribeFactory extends BaseMqttActionFactory {
 
         return Completable.create(emitter -> {
             try {
-                this.client.unsubscribe(topics, null, new UnsubscribeActionListener(emitter));
+                this.client.unsubscribe(topics, null,
+                        new UnsubscribeActionListener(emitter));
             } catch (final MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);

@@ -24,11 +24,13 @@ import java.util.Objects;
 
 import io.reactivex.FlowableEmitter;
 
-public abstract class FlowableEmitterMqttActionListener<T> extends BaseEmitterMqttActionListener {
+public abstract class FlowableEmitterMqttActionListener<T>
+        extends BaseEmitterMqttActionListener {
 
     protected final FlowableEmitter<? super T> emitter;
 
-    public FlowableEmitterMqttActionListener(final FlowableEmitter<? super T> emitter) {
+    public FlowableEmitterMqttActionListener(
+            final FlowableEmitter<? super T> emitter) {
         this.emitter = Objects.requireNonNull(emitter);
     }
 

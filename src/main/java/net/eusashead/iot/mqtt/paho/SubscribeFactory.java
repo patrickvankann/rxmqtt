@@ -36,9 +36,11 @@ import net.eusashead.iot.mqtt.SubscribeMessage;
 
 public class SubscribeFactory extends BaseMqttActionFactory {
 
-    static final class SubscribeActionListener extends FlowableEmitterMqttActionListener<SubscribeMessage> {
+    static final class SubscribeActionListener
+            extends FlowableEmitterMqttActionListener<SubscribeMessage> {
 
-        public SubscribeActionListener(final FlowableEmitter<? super SubscribeMessage> observer) {
+        public SubscribeActionListener(
+                final FlowableEmitter<? super SubscribeMessage> observer) {
             super(observer);
         }
 
@@ -48,14 +50,15 @@ public class SubscribeFactory extends BaseMqttActionFactory {
         }
     }
 
-    private final static Logger LOGGER = Logger.getLogger(SubscribeActionListener.class.getName());
+    private final static Logger LOGGER = Logger
+            .getLogger(SubscribeActionListener.class.getName());
 
     public SubscribeFactory(final IMqttAsyncClient client) {
         super(client);
     }
 
-    public Flowable<SubscribeMessage> create(final String[] topics, final int[] qos,
-            final BackpressureStrategy backpressureStrategy) {
+    public Flowable<SubscribeMessage> create(final String[] topics,
+            final int[] qos, final BackpressureStrategy backpressureStrategy) {
 
         Objects.requireNonNull(topics);
         Objects.requireNonNull(qos);
@@ -70,7 +73,8 @@ public class SubscribeFactory extends BaseMqttActionFactory {
             }
 
             try {
-                this.client.subscribe(topics, qos, null, new SubscribeActionListener(emitter), listeners);
+                this.client.subscribe(topics, qos, null,
+                        new SubscribeActionListener(emitter), listeners);
             } catch (final MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
@@ -84,18 +88,22 @@ public class SubscribeFactory extends BaseMqttActionFactory {
 
 class SubscriberMqttMessageListener implements IMqttMessageListener {
 
-    private final static Logger LOGGER = Logger.getLogger(SubscriberMqttMessageListener.class.getName());
+    private final static Logger LOGGER = Logger
+            .getLogger(SubscriberMqttMessageListener.class.getName());
 
     private final FlowableEmitter<? super SubscribeMessage> observer;
 
-    SubscriberMqttMessageListener(final FlowableEmitter<? super SubscribeMessage> emitter) {
+    SubscriberMqttMessageListener(
+            final FlowableEmitter<? super SubscribeMessage> emitter) {
         this.observer = Objects.requireNonNull(emitter);
     }
 
     @Override
-    public void messageArrived(final String topic, final org.eclipse.paho.client.mqttv3.MqttMessage message) {
-        LOGGER.log(Level.FINE, String.format("Message %s received on topic %s", message.getId(), topic));
-        this.observer.onNext(
-                SubscribeMessage.create(message.getId(), topic, message.getPayload(), message.getQos(), message.isRetained()));
+    public void messageArrived(final String topic,
+            final org.eclipse.paho.client.mqttv3.MqttMessage message) {
+        LOGGER.log(Level.FINE, String.format("Message %s received on topic %s",
+                message.getId(), topic));
+        this.observer.onNext(SubscribeMessage.create(message.getId(), topic,
+                message.getPayload(), message.getQos(), message.isRetained()));
     }
 }

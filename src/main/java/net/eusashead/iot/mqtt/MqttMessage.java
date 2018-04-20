@@ -39,12 +39,13 @@ abstract class AbstractMqttMessage implements MqttMessage {
     protected final int qos;
     protected final boolean retained;
 
-    AbstractMqttMessage(final byte[] payload, final int qos, final boolean retained) {
+    AbstractMqttMessage(final byte[] payload, final int qos,
+            final boolean retained) {
         this.payload = Objects.requireNonNull(payload);
         this.qos = qos;
         this.retained = retained;
     }
-    
+
     @Override
     public byte[] getPayload() {
         return this.payload;
@@ -64,27 +65,33 @@ abstract class AbstractMqttMessage implements MqttMessage {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(payload);
-        result = prime * result + qos;
-        result = prime * result + (retained ? 1231 : 1237);
+        result = prime * result + Arrays.hashCode(this.payload);
+        result = prime * result + this.qos;
+        result = prime * result + (this.retained ? 1231 : 1237);
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (this.getClass() != obj.getClass()) {
             return false;
-        AbstractMqttMessage other = (AbstractMqttMessage) obj;
-        if (!Arrays.equals(payload, other.payload))
+        }
+        final AbstractMqttMessage other = (AbstractMqttMessage) obj;
+        if (!Arrays.equals(this.payload, other.payload)) {
             return false;
-        if (qos != other.qos)
+        }
+        if (this.qos != other.qos) {
             return false;
-        if (retained != other.retained)
+        }
+        if (this.retained != other.retained) {
             return false;
+        }
         return true;
     }
 

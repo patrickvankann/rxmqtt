@@ -58,12 +58,13 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
             this(brokerUri, MqttAsyncClient.generateClientId());
         }
 
-        public Builder(final String brokerUri, final String clientId) throws MqttException {
+        public Builder(final String brokerUri, final String clientId)
+                throws MqttException {
             this(brokerUri, clientId, new MemoryPersistence());
         }
 
-        public Builder(final String brokerUri, final String clientId, final MqttClientPersistence persistence)
-                throws MqttException {
+        public Builder(final String brokerUri, final String clientId,
+                final MqttClientPersistence persistence) throws MqttException {
             this(new MqttAsyncClient(brokerUri, clientId, persistence));
         }
 
@@ -71,7 +72,8 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
             this.client = client;
             this.connectOptions = new MqttConnectOptions();
             this.closeFactory = new CloseFactory(client);
-            this.connectFactory = new ConnectFactory(this.client, this.connectOptions);
+            this.connectFactory = new ConnectFactory(this.client,
+                    this.connectOptions);
             this.disconnectFactory = new DisconnectFactory(client);
             this.publishFactory = new PublishFactory(client);
             this.subscribeFactory = new SubscribeFactory(client);
@@ -120,9 +122,11 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
             return this;
         }
 
-        public Builder setConnectOptions(final MqttConnectOptions connectOptions) {
+        public Builder setConnectOptions(
+                final MqttConnectOptions connectOptions) {
             this.connectOptions = connectOptions;
-            this.connectFactory = new ConnectFactory(this.client, this.connectOptions);
+            this.connectFactory = new ConnectFactory(this.client,
+                    this.connectOptions);
             return this;
         }
 
@@ -136,7 +140,8 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
             return this;
         }
 
-        public Builder setDisconnectFactory(final DisconnectFactory disconnectFactory) {
+        public Builder setDisconnectFactory(
+                final DisconnectFactory disconnectFactory) {
             this.disconnectFactory = Objects.requireNonNull(disconnectFactory);
             return this;
         }
@@ -146,18 +151,23 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
             return this;
         }
 
-        public Builder setSubscribeFactory(final SubscribeFactory subscribeFactory) {
+        public Builder setSubscribeFactory(
+                final SubscribeFactory subscribeFactory) {
             this.subscribeFactory = Objects.requireNonNull(subscribeFactory);
             return this;
         }
 
-        public Builder setUnsubscribeFactory(final UnsubscribeFactory unsubscribeFactory) {
-            this.unsubscribeFactory = Objects.requireNonNull(unsubscribeFactory);
+        public Builder setUnsubscribeFactory(
+                final UnsubscribeFactory unsubscribeFactory) {
+            this.unsubscribeFactory = Objects
+                    .requireNonNull(unsubscribeFactory);
             return this;
         }
 
-        public Builder setBackpressureStrategy(final BackpressureStrategy backpressureStrategy) {
-            this.backpressureStrategy = Objects.requireNonNull(backpressureStrategy);
+        public Builder setBackpressureStrategy(
+                final BackpressureStrategy backpressureStrategy) {
+            this.backpressureStrategy = Objects
+                    .requireNonNull(backpressureStrategy);
             return this;
         }
 
@@ -256,7 +266,8 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * net.eusashead.iot.mqtt.PublishMessage)
      */
     @Override
-    public Single<PublishToken> publish(final String topic, final PublishMessage msg) {
+    public Single<PublishToken> publish(final String topic,
+            final PublishMessage msg) {
         return this.publishFactory.create(topic, msg);
 
     }
@@ -269,8 +280,10 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * int[])
      */
     @Override
-    public Flowable<SubscribeMessage> subscribe(final String topics[], final int qos[]) {
-        return this.subscribeFactory.create(topics, qos, this.backpressureStrategy);
+    public Flowable<SubscribeMessage> subscribe(final String topics[],
+            final int qos[]) {
+        return this.subscribeFactory.create(topics, qos,
+                this.backpressureStrategy);
     }
 
     /*
@@ -281,7 +294,8 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * int)
      */
     @Override
-    public Flowable<SubscribeMessage> subscribe(final String topic, final int qos) {
+    public Flowable<SubscribeMessage> subscribe(final String topic,
+            final int qos) {
         Objects.requireNonNull(topic);
         Objects.requireNonNull(qos);
         return this.subscribe(new String[] { topic }, new int[] { qos });
@@ -315,7 +329,8 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
         return builder(brokerUri, MqttAsyncClient.generateClientId());
     }
 
-    public static Builder builder(final String brokerUri, final String clientId) throws MqttException {
+    public static Builder builder(final String brokerUri, final String clientId)
+            throws MqttException {
         return builder(brokerUri, clientId, new MemoryPersistence());
     }
 

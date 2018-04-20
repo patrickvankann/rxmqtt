@@ -32,9 +32,11 @@ import io.reactivex.CompletableEmitter;
 
 public class DisconnectFactory extends BaseMqttActionFactory {
 
-    private final static Logger LOGGER = Logger.getLogger(DisconnectFactory.class.getName());
+    private final static Logger LOGGER = Logger
+            .getLogger(DisconnectFactory.class.getName());
 
-    static final class DisconnectActionListener extends CompletableEmitterMqttActionListener {
+    static final class DisconnectActionListener
+            extends CompletableEmitterMqttActionListener {
 
         public DisconnectActionListener(final CompletableEmitter emitter) {
             super(emitter);
@@ -54,7 +56,8 @@ public class DisconnectFactory extends BaseMqttActionFactory {
         return Completable.create(emitter -> {
 
             try {
-                this.client.disconnect(null, new DisconnectActionListener(emitter));
+                this.client.disconnect(null,
+                        new DisconnectActionListener(emitter));
             } catch (final MqttException exception) {
                 if (LOGGER.isLoggable(Level.SEVERE)) {
                     LOGGER.log(Level.SEVERE, exception.getMessage(), exception);

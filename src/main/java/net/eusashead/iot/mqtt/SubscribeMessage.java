@@ -34,8 +34,9 @@ public interface SubscribeMessage extends MqttMessage {
         return new SubscribeMessageImpl(id, topic, payload, qos, retained);
     }
 
-    class SubscribeMessageImpl extends AbstractMqttMessage implements SubscribeMessage {
-        
+    class SubscribeMessageImpl extends AbstractMqttMessage
+            implements SubscribeMessage {
+
         private final int id;
         private final String topic;
 
@@ -45,12 +46,12 @@ public interface SubscribeMessage extends MqttMessage {
             this.id = Objects.requireNonNull(id);
             this.topic = Objects.requireNonNull(topic);
         }
-        
+
         @Override
         public int getId() {
             return this.id;
         }
-        
+
         @Override
         public String getTopic() {
             return this.topic;
@@ -66,21 +67,27 @@ public interface SubscribeMessage extends MqttMessage {
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
+        public boolean equals(final Object obj) {
+            if (this == obj) {
                 return true;
-            if (!super.equals(obj))
+            }
+            if (!super.equals(obj)) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
-            SubscribeMessageImpl other = (SubscribeMessageImpl) obj;
-            if (id != other.id)
+            }
+            final SubscribeMessageImpl other = (SubscribeMessageImpl) obj;
+            if (id != other.id) {
                 return false;
+            }
             if (topic == null) {
-                if (other.topic != null)
+                if (other.topic != null) {
                     return false;
-            } else if (!topic.equals(other.topic))
+                }
+            } else if (!topic.equals(other.topic)) {
                 return false;
+            }
             return true;
         }
 
@@ -90,7 +97,7 @@ public interface SubscribeMessage extends MqttMessage {
                     + ", payload=" + Arrays.toString(payload) + ", qos=" + qos
                     + ", retained=" + retained + "]";
         }
-        
+
     }
 
 }

@@ -24,11 +24,13 @@ import java.util.Objects;
 
 import io.reactivex.CompletableEmitter;
 
-public abstract class CompletableEmitterMqttActionListener extends BaseEmitterMqttActionListener {
+public abstract class CompletableEmitterMqttActionListener
+        extends BaseEmitterMqttActionListener {
 
     protected final CompletableEmitter emitter;
 
-    public CompletableEmitterMqttActionListener(final CompletableEmitter emitter) {
+    public CompletableEmitterMqttActionListener(
+            final CompletableEmitter emitter) {
         this.emitter = Objects.requireNonNull(emitter);
     }
 

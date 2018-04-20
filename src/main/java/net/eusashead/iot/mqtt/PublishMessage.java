@@ -23,14 +23,17 @@ import java.util.Arrays;
  */
 
 public interface PublishMessage extends MqttMessage {
-	
-	static PublishMessage create(final byte[] payload, final int qos, final boolean retained) {
+
+    static PublishMessage create(final byte[] payload, final int qos,
+            final boolean retained) {
         return new PublishMessageImpl(payload, qos, retained);
     }
-	
-	class PublishMessageImpl extends AbstractMqttMessage implements PublishMessage {
 
-        private PublishMessageImpl(byte[] payload, int qos, boolean retained) {
+    class PublishMessageImpl extends AbstractMqttMessage
+            implements PublishMessage {
+
+        private PublishMessageImpl(final byte[] payload, final int qos,
+                final boolean retained) {
             super(payload, qos, retained);
         }
 
@@ -40,6 +43,6 @@ public interface PublishMessage extends MqttMessage {
                     + ", qos=" + qos + ", retained=" + retained + "]";
         }
 
-	}
+    }
 
 }
