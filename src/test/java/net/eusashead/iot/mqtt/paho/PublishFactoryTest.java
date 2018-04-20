@@ -39,6 +39,7 @@ import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.MqttToken;
+import net.eusashead.iot.mqtt.PublishMessage;
 import net.eusashead.iot.mqtt.PublishToken;
 import net.eusashead.iot.mqtt.paho.PublishFactory.PublishActionListener;
 
@@ -54,7 +55,7 @@ public class PublishFactoryTest {
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
         final PublishFactory factory = new PublishFactory(client);
         final String topic = "topic1";
-        final MqttMessage msg = MqttMessage.create(0, new byte[] { 'a',  'b',  'c' }, 1, true);
+        final PublishMessage msg = PublishMessage.create(new byte[] { 'a',  'b',  'c' }, 1, true);
         final ArgumentCaptor<IMqttActionListener> actionListener = ArgumentCaptor.forClass(IMqttActionListener.class);
 
         // When

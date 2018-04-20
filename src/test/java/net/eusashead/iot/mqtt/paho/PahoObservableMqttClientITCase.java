@@ -39,6 +39,7 @@ import org.junit.runners.JUnit4;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import net.eusashead.iot.mqtt.MqttMessage;
+import net.eusashead.iot.mqtt.PublishMessage;
 import net.eusashead.iot.mqtt.PublishToken;
 
 @RunWith(JUnit4.class)
@@ -140,7 +141,7 @@ public class PahoObservableMqttClientITCase {
         });
 
         // Subscribe
-        MqttMessage expected = MqttMessage.create(0, new byte[] { 'a', 'b', 'c' }, 1, false);
+        PublishMessage expected = PublishMessage.create(new byte[] { 'a', 'b', 'c' }, 1, false);
         this.observableClient.subscribe(TOPIC, 1).subscribe(r -> {
             result.set(r);
             latch.countDown();
@@ -225,7 +226,7 @@ public class PahoObservableMqttClientITCase {
         });
 
         // Publish the message
-        MqttMessage msg = MqttMessage.create(0, new byte[] { 'a', 'b', 'c' }, 1, false);
+        PublishMessage msg = PublishMessage.create(new byte[] { 'a', 'b', 'c' }, 1, false);
         Single<PublishToken> obs = this.observableClient.publish(TOPIC, msg);
 
         // Subscribe for result
@@ -249,12 +250,6 @@ public class PahoObservableMqttClientITCase {
         Assert.assertNotNull(publishToken.getMessageId());
         Assert.assertEquals(iMqttDeliveryToken.getMessageId(), publishToken.getMessageId());
         
-        System.out.println(publishToken.getClientId());
-        System.out.println(publishToken.getMessageId());
-        System.out.println(publishToken.getSessionPresent());
-        for (String s: publishToken.getTopics()) {
-            System.out.println(s);
-        }
     }
 
 }

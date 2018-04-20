@@ -32,13 +32,13 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
-import net.eusashead.iot.mqtt.MqttMessage;
+import net.eusashead.iot.mqtt.SubscribeMessage;
 
 public class SubscribeFactory extends BaseMqttActionFactory {
 
-    static final class SubscribeActionListener extends FlowableEmitterMqttActionListener<MqttMessage> {
+    static final class SubscribeActionListener extends FlowableEmitterMqttActionListener<SubscribeMessage> {
 
-        public SubscribeActionListener(final FlowableEmitter<? super MqttMessage> observer) {
+        public SubscribeActionListener(final FlowableEmitter<? super SubscribeMessage> observer) {
             super(observer);
         }
 
@@ -54,7 +54,7 @@ public class SubscribeFactory extends BaseMqttActionFactory {
         super(client);
     }
 
-    public Flowable<MqttMessage> create(final String[] topics, final int[] qos,
+    public Flowable<SubscribeMessage> create(final String[] topics, final int[] qos,
             final BackpressureStrategy backpressureStrategy) {
 
         Objects.requireNonNull(topics);
@@ -86,9 +86,9 @@ class SubscriberMqttMessageListener implements IMqttMessageListener {
 
     private final static Logger LOGGER = Logger.getLogger(SubscriberMqttMessageListener.class.getName());
 
-    private final FlowableEmitter<? super MqttMessage> observer;
+    private final FlowableEmitter<? super SubscribeMessage> observer;
 
-    SubscriberMqttMessageListener(final FlowableEmitter<? super MqttMessage> emitter) {
+    SubscriberMqttMessageListener(final FlowableEmitter<? super SubscribeMessage> emitter) {
         this.observer = Objects.requireNonNull(emitter);
     }
 
@@ -96,6 +96,6 @@ class SubscriberMqttMessageListener implements IMqttMessageListener {
     public void messageArrived(final String topic, final org.eclipse.paho.client.mqttv3.MqttMessage message) {
         LOGGER.log(Level.FINE, String.format("Message %s received on topic %s", message.getId(), topic));
         this.observer.onNext(
-                MqttMessage.create(message.getId(), message.getPayload(), message.getQos(), message.isRetained()));
+                SubscribeMessage.create(message.getId(), topic, message.getPayload(), message.getQos(), message.isRetained()));
     }
 }

@@ -34,10 +34,11 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
-import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.ObservableMqttClient;
 import net.eusashead.iot.mqtt.ObservableMqttClientBuilder;
+import net.eusashead.iot.mqtt.PublishMessage;
 import net.eusashead.iot.mqtt.PublishToken;
+import net.eusashead.iot.mqtt.SubscribeMessage;
 
 public class PahoObservableMqttClient implements ObservableMqttClient {
 
@@ -252,10 +253,10 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      *
      * @see
      * net.eusashead.iot.mqtt.ObservableMqttClient#publish(java.lang.String,
-     * net.eusashead.iot.mqtt.MqttMessage)
+     * net.eusashead.iot.mqtt.PublishMessage)
      */
     @Override
-    public Single<PublishToken> publish(final String topic, final MqttMessage msg) {
+    public Single<PublishToken> publish(final String topic, final PublishMessage msg) {
         return this.publishFactory.create(topic, msg);
 
     }
@@ -268,7 +269,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * int[])
      */
     @Override
-    public Flowable<MqttMessage> subscribe(final String topics[], final int qos[]) {
+    public Flowable<SubscribeMessage> subscribe(final String topics[], final int qos[]) {
         return this.subscribeFactory.create(topics, qos, this.backpressureStrategy);
     }
 
@@ -280,7 +281,7 @@ public class PahoObservableMqttClient implements ObservableMqttClient {
      * int)
      */
     @Override
-    public Flowable<MqttMessage> subscribe(final String topic, final int qos) {
+    public Flowable<SubscribeMessage> subscribe(final String topic, final int qos) {
         Objects.requireNonNull(topic);
         Objects.requireNonNull(qos);
         return this.subscribe(new String[] { topic }, new int[] { qos });

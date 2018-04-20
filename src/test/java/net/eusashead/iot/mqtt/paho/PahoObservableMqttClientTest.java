@@ -32,8 +32,9 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
-import net.eusashead.iot.mqtt.MqttMessage;
+import net.eusashead.iot.mqtt.PublishMessage;
 import net.eusashead.iot.mqtt.PublishToken;
+import net.eusashead.iot.mqtt.SubscribeMessage;
 import net.eusashead.iot.mqtt.paho.PahoObservableMqttClient.Builder;
 
 @RunWith(JUnit4.class)
@@ -170,7 +171,7 @@ public class PahoObservableMqttClientTest {
         final PublishFactory factory = builder.getPublishFactory();
         final Single<PublishToken> expected = Single.just(Mockito.mock(PublishToken.class));
         final String topic = "topic";
-        final MqttMessage message = Mockito.mock(MqttMessage.class);
+        final PublishMessage message = Mockito.mock(PublishMessage.class);
         Mockito.when(factory.create(topic, message)).thenReturn(expected);
         final PahoObservableMqttClient target = builder.build();
         final Single<PublishToken> actual = target.publish(topic, message);
@@ -188,12 +189,12 @@ public class PahoObservableMqttClientTest {
     public void whenSubscribeIsCalledThenCreateIsCalled() {
         final Builder builder = builderWithMocks("clientId");
         final SubscribeFactory factory = builder.getSubscribeFactory();
-        final Flowable<MqttMessage> expected = Flowable.just(Mockito.mock(MqttMessage.class));
+        final Flowable<SubscribeMessage> expected = Flowable.just(Mockito.mock(SubscribeMessage.class));
         final String[] topic = new String[] { "topic" };
         final int[] qos = new int[]{ 1 };
         Mockito.when(factory.create(topic, qos, BackpressureStrategy.BUFFER)).thenReturn(expected);
         final PahoObservableMqttClient target = builder.build();
-        final Flowable<MqttMessage> actual = target.subscribe(topic, qos);
+        final Flowable<SubscribeMessage> actual = target.subscribe(topic, qos);
         Mockito.verify(factory).create(topic, qos, BackpressureStrategy.BUFFER);
         Assert.assertEquals(expected, actual);
     }

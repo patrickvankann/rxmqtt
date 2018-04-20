@@ -3,6 +3,14 @@ An [RxJava](https://github.com/ReactiveX/RxJava) API for handling [MQTT](http://
 
 The main interface is `ObservableMqttClient`, which can be used to connect, publish and subscribe to a broker in a reactive way.
 
+## API Changes in 1.2.0
+In previous versions, the same `MqttMessage` class was used for both publishing and subscribing. However, some of the fields in a message received by a subscriber are not needed by a publisher - specifically, the message id. Message identifier is set by the underlying MQTT server, not the publishing client.
+
+Additionally, the topic that the message was received on is useful to a subscriber but redundant for a publisher.
+
+Hence `MqttMessage` is now split into sub-interfaces: `PublishMessage` and `SubscribeMessage`. Only `SubscribeMessage` requires a message id or topic.
+
+
 ## API Changes in 1.1.0
 In the 1.0.x branch, all of the `ObservableMqttClient` methods returned an [`Observable<T>`](http://reactivex.io/RxJava/1.x/javadoc/rx/Observable.html). This was not ideal as some did not return any data (e.g. `Observable<Void>`) or returned just a single value (e.g `Observable<PublishToken>`).
 
@@ -44,7 +52,7 @@ client.connect().subscribe(() -> {
 Asynchronously publish a message to the broker using an RxJava [`Single`](http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/Single.html).
 
 ```java
-final MqttMessage msg = MqttMessage.create(...);
+final PublishMessage msg = PublishMessage.create(...);
 client.publish("mytopic", msg).subscribe(t -> {
   // do something on success
 }, e -> {

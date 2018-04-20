@@ -37,7 +37,7 @@ import org.mockito.Mockito;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import net.eusashead.iot.mqtt.MqttMessage;
+import net.eusashead.iot.mqtt.SubscribeMessage;
 
 @RunWith(JUnit4.class)
 public class SubscribeFactoryTest {
@@ -53,7 +53,7 @@ public class SubscribeFactoryTest {
         final ArgumentCaptor<IMqttMessageListener[]> messageListener = ArgumentCaptor.forClass(IMqttMessageListener[].class);
         final String[] topics = new String[]{ "topic1", "topic2" };
         final int[] qos = new int[]{ 1, 2 };
-        final Flowable<MqttMessage> obs = factory.create(topics, qos, BackpressureStrategy.ERROR);
+        final Flowable<SubscribeMessage> obs = factory.create(topics, qos, BackpressureStrategy.ERROR);
         Assert.assertNotNull(obs);
         obs.subscribe();
         Mockito.verify(client).subscribe(Mockito.same(topics),
@@ -81,7 +81,7 @@ public class SubscribeFactoryTest {
                 messageListener.capture()))
                 .thenThrow(new MqttException(MqttException.REASON_CODE_CLIENT_CONNECTED));
         final SubscribeFactory factory = new SubscribeFactory(client);
-        final Flowable<MqttMessage> obs = factory.create(topics, qos, BackpressureStrategy.ERROR);
+        final Flowable<SubscribeMessage> obs = factory.create(topics, qos, BackpressureStrategy.ERROR);
         obs.blockingFirst();
     }
     

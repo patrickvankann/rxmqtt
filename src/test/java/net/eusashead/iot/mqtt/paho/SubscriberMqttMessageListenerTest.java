@@ -30,6 +30,7 @@ import org.mockito.Mockito;
 
 import io.reactivex.FlowableEmitter;
 import net.eusashead.iot.mqtt.MqttMessage;
+import net.eusashead.iot.mqtt.SubscribeMessage;
 
 @RunWith(JUnit4.class)
 public class SubscriberMqttMessageListenerTest {
@@ -58,12 +59,13 @@ public class SubscriberMqttMessageListenerTest {
         expectedMessage.setQos(2);
         expectedMessage.setId(1);
         expectedMessage.setRetained(true);
-        final ArgumentCaptor<MqttMessage> actualMessage = ArgumentCaptor.forClass(MqttMessage.class);
+        final ArgumentCaptor<SubscribeMessage> actualMessage = ArgumentCaptor.forClass(SubscribeMessage.class);
         listener.messageArrived(expectedTopic, expectedMessage);
         Mockito.verify(observer).onNext(actualMessage.capture());
         Assert.assertArrayEquals(expectedPayload, actualMessage.getValue().getPayload());
         Assert.assertEquals(2, actualMessage.getValue().getQos());
         Assert.assertEquals(1, actualMessage.getValue().getId());
         Assert.assertTrue(actualMessage.getValue().isRetained());
+        Assert.assertEquals(expectedTopic, actualMessage.getValue().getTopic());
     }
 }

@@ -77,30 +77,29 @@ public interface ObservableMqttClient {
     Completable disconnect();
 
     /**
-     * Publish an {@link MqttMessage} to a {@link String} topic at the given QOS
+     * Publish an {@link PublishMessage} to a {@link String} topic at the given QOS
      * level
      *
      * @return {@link Single} that will complete on successful publication with
      *         a {@link PublishToken}
      */
-    Single<PublishToken> publish(String topic, MqttMessage msg);
+    Single<PublishToken> publish(String topic, PublishMessage msg);
 
     /**
      * Subscribe to multiple {@link String} topics to receive multiple
-     * {@link MqttMessage} at the given QOS levels
+     * {@link SubscribeMessage} at the given QOS levels
      *
-     * @return {@link Single} that will complete on successful publication with
-     *         a {@link PublishToken}
+     * @return {@link Flowable} that will receive multiple {@link SubscribeMessage}
      */
-    Flowable<MqttMessage> subscribe(String[] topics, int[] qos);
+    Flowable<SubscribeMessage> subscribe(String[] topics, int[] qos);
 
     /**
      * Subscribe to a {@link String} topic to receive multiple
-     * {@link MqttMessage} at the supplied QOS level
+     * {@link SubscribeMessage} at the supplied QOS level
      *
-     * @return {@link Flowable} that will receive multiple {@link MqttMessage}
+     * @return {@link Flowable} that will receive multiple {@link SubscribeMessage}
      */
-    Flowable<MqttMessage> subscribe(String topic, int qos);
+    Flowable<SubscribeMessage> subscribe(String topic, int qos);
 
     /**
      * Unsubscribe from the given topics {@link String} array
