@@ -29,6 +29,7 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,9 +39,9 @@ import org.junit.runners.JUnit4;
 
 import io.reactivex.Completable;
 import io.reactivex.Single;
-import net.eusashead.iot.mqtt.MqttMessage;
 import net.eusashead.iot.mqtt.PublishMessage;
 import net.eusashead.iot.mqtt.PublishToken;
+import net.eusashead.iot.mqtt.SubscribeMessage;
 
 @RunWith(JUnit4.class)
 public class PahoObservableMqttClientITCase {
@@ -120,14 +121,14 @@ public class PahoObservableMqttClientITCase {
 
         final CountDownLatch latch = new CountDownLatch(2);
         final AtomicReference<IMqttDeliveryToken> token = new AtomicReference<>();
-        final AtomicReference<MqttMessage> result = new AtomicReference<>();
+        final AtomicReference<SubscribeMessage> result = new AtomicReference<>();
 
         // Callback to monitor delivery completion
         this.asyncClient.setCallback(new MqttCallback() {
 
             @Override
             public void messageArrived(final String topic,
-                    final org.eclipse.paho.client.mqttv3.MqttMessage m)
+                    final MqttMessage m)
                     throws Exception {
             }
 
@@ -174,7 +175,7 @@ public class PahoObservableMqttClientITCase {
 
             @Override
             public void messageArrived(final String topic,
-                    final org.eclipse.paho.client.mqttv3.MqttMessage m)
+                    final MqttMessage m)
                     throws Exception {
             }
 
@@ -219,7 +220,7 @@ public class PahoObservableMqttClientITCase {
 
             @Override
             public void messageArrived(final String topic,
-                    final org.eclipse.paho.client.mqttv3.MqttMessage message)
+                    final MqttMessage message)
                     throws Exception {
             }
 

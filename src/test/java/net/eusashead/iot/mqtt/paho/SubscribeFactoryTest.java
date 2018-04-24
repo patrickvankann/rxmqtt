@@ -107,7 +107,6 @@ public class SubscribeFactoryTest {
         final IMqttAsyncClient client = Mockito.mock(IMqttAsyncClient.class);
         final SubscribeFactory factory = new SubscribeFactory(client);
         final String[] topics = new String[] { "topic1", "topic2" };
-        ;
         final int[] qos = null;
         factory.create(topics, qos, BackpressureStrategy.ERROR);
     }
