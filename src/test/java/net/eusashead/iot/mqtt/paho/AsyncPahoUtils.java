@@ -27,19 +27,24 @@ import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 
 public class AsyncPahoUtils {
+	
+	public static void connect(final IMqttAsyncClient client) throws Throwable {
+		connect(client, new MqttConnectOptions());
+	}
 
-    public static void connect(final IMqttAsyncClient client) throws Throwable {
+    public static void connect(final IMqttAsyncClient client, final MqttConnectOptions options) throws Throwable {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<Throwable> error = new AtomicReference<>();
         final AtomicReference<Boolean> success = new AtomicReference<>(
                 Boolean.TRUE);
-        client.connect(null, new IMqttActionListener() {
+        client.connect(options, null, new IMqttActionListener() {
 
             @Override
             public void onSuccess(final IMqttToken asyncActionToken) {
