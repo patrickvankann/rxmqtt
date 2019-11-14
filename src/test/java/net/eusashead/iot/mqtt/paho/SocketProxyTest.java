@@ -217,7 +217,7 @@ abstract class AbstractSocketServer {
 	public void stop() throws InterruptedException {
 		if (this.started.get()) {
 			this.started.set(false);
-			this.thread.join();
+			this.thread.join(1000);
 		}
 	}
 
