@@ -77,8 +77,10 @@ public interface ObservableMqttClient {
     Completable disconnect();
 
     /**
-     * Publish an {@link PublishMessage} to a {@link String} topic at the given
-     * QOS level
+     * Publish an {@link PublishMessage} to a {@link String} topic.
+     *
+     * @param topic {@link String} topic name
+     * @param msg {@link PublishMessage} message to publish
      *
      * @return {@link Single} that will complete on successful publication with
      *         a {@link PublishToken}
@@ -89,6 +91,9 @@ public interface ObservableMqttClient {
      * Subscribe to multiple {@link String} topics to receive multiple
      * {@link SubscribeMessage} at the given QOS levels
      *
+     * @param topics {@link String} topic names
+     * @param qos QOS level to use for subscription
+     *
      * @return {@link Flowable} that will receive multiple
      *         {@link SubscribeMessage}
      */
@@ -98,6 +103,9 @@ public interface ObservableMqttClient {
      * Subscribe to a {@link String} topic to receive multiple
      * {@link SubscribeMessage} at the supplied QOS level
      *
+     * @param topic {@link String} topic name
+     * @param qos QOS level to use for subscription
+     *
      * @return {@link Flowable} that will receive multiple
      *         {@link SubscribeMessage}
      */
@@ -106,12 +114,16 @@ public interface ObservableMqttClient {
     /**
      * Unsubscribe from the given topics {@link String} array
      *
+     * @param topics {@link String} topic names
+     *
      * @return {@link Completable} that will complete on successful unsubscribe
      */
     Completable unsubscribe(String[] topics);
 
     /**
      * Unsubscribe from the given topic {@link String}
+     *
+     * @param topic {@link String} topic name
      *
      * @return {@link Completable} that will complete on successful unsubscribe
      */
