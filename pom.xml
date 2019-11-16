@@ -4,7 +4,7 @@
     <groupId>net.eusashead.mqtt</groupId>
     <artifactId>rxmqtt</artifactId>
     <packaging>jar</packaging>
-    <version>1.2.2.RELEASE-SNAPSHOT</version>
+    <version>1.2.1.RELEASE-SNAPSHOT</version>
     <name>rxmqtt</name>
     <url>https://github.com/patrickvankann/rxmqtt</url>
     <description>An RxJava API for handling MQTT messages with an implementation using the Paho Java MQTT library.</description>
